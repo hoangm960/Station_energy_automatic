@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:ocean_station_auto/modules/station_list_module.dart';
-import 'package:ocean_station_auto/models/station_model.dart';
+import 'package:ocean_station_auto/src/modules/station_list_module.dart';
+import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../settings/settings_view.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
+  static const routeName = '/';
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -14,7 +19,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Ocean Station Automation'),
+          title: Text(AppLocalizations.of(context)!.appTitle),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                Navigator.restorablePushNamed(context, SettingsView.routeName);
+              },
+            ),
+          ],
         ),
         body: StationList([
           Station(
