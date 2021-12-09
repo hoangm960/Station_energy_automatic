@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
 
+import 'components/graph_list.dart';
+import 'components/station_info.dart';
+
 class StationScreen extends StatefulWidget {
   final int index;
   const StationScreen(this.index, {Key? key}) : super(key: key);
@@ -23,56 +26,32 @@ class _StationScreenState extends State<StationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(station!.name),
-      ),
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text('Location: ${station!.location.x} ${station!.location.y}'),
-        Text('VoltDC: ${station!.voltDC} V'),
-        Text('CurrentDC: ${station!.currentDC} A'),
-        Text('VoltAC: ${station!.voltAC} V'),
-        Text('CurrentAC: ${station!.currentAC} A'),
-        Text('Power: ${station!.power} W'),
-        Text('Energy: ${station!.energy} kW/h'),
-        Text('Power Factor: ${station!.powerFactor}'),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('State: '),
-            station!.state
-                ? Row(
-                    children: const [
-                      Text(
-                        'good',
-                        style: TextStyle(color: Colors.green),
+        appBar: AppBar(
+          title: Text(station!.name),
+        ),
+        body: SafeArea(
+            child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    Row(children: [
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                          height: 750.0,
+                          color: Colors.black45,
+                        ),
                       ),
-                      SizedBox(
-                        width: 5.0,
+                      Expanded(
+                        flex: 1,
+                        child: StationInfo(
+                          station: station!,
+                        ),
                       ),
-                      Icon(
-                        Icons.check_box,
-                        color: Colors.green,
-                      ),
-                    ],
-                  )
-                : Row(
-                    children: const [
-                      Text(
-                        'bad',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      SizedBox(
-                        width: 5.0,
-                      ),
-                      Icon(
-                        Icons.warning,
-                        color: Colors.red,
-                      ),
-                    ],
-                  )
-          ],
-        )
-      ]),
-    );
+                    ]),
+                    const StationGraphList(title: 'Output DC:'),
+                    const StationGraphList(title: 'Output AC:'),
+                  ],
+                ))));
   }
 }
