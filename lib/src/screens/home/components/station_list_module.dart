@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
-import 'package:ocean_station_auto/src/screens/station_page.dart';
+import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 
 class StationList extends StatefulWidget {
   final List<Station> stations;
@@ -17,10 +17,8 @@ class _StationListState extends State<StationList> {
       elevation: 5.0,
       child: InkWell(
         onTap: () {
-          Navigator.restorablePushNamed(
-            context,
-            StationScreen.routeName,
-          );
+          Navigator.restorablePushNamed(context, StationScreen.routeName,
+              arguments: <String, int>{'station': index});
         },
         child: Padding(
           padding: const EdgeInsets.all(10.0),

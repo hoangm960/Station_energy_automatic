@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:ocean_station_auto/src/screens/home_page.dart';
-import 'package:ocean_station_auto/src/screens/station_page.dart';
+import 'package:ocean_station_auto/src/screens/home/home_page.dart';
+import 'package:ocean_station_auto/src/screens/profile_page.dart';
+import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 
-import 'sample_feature/sample_item_details_view.dart';
-import 'sample_feature/sample_item_list_view.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
@@ -22,7 +21,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: settingsController,
-      
       builder: (BuildContext context, Widget? child) {
         return MaterialApp(
           restorationScopeId: 'app',
@@ -38,7 +36,6 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-
           theme: ThemeData(),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
@@ -50,9 +47,13 @@ class MyApp extends StatelessWidget {
                 switch (routeSettings.name) {
                   case SettingsView.routeName:
                     return SettingsView(controller: settingsController);
+                  case ProfileScreen.routeName:
+                    return const ProfileScreen();
                   case StationScreen.routeName:
-                    return const StationScreen();
+                    Map stationArgs = routeSettings.arguments as Map;
+                    return StationScreen(stationArgs['station']);
                   case HomePage.routeName:
+                    return const HomePage();
                   default:
                     return const HomePage();
                 }
