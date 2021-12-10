@@ -22,10 +22,6 @@ class _StationMapState extends State<StationMap> {
     location: _currentLocation,
   );
 
-  late final markers = [
-    _currentLocation,
-  ];
-
   @override
   void initState() {
     super.initState();
@@ -88,23 +84,21 @@ class _StationMapState extends State<StationMap> {
         child: MapLayoutBuilder(
             controller: controller,
             builder: (context, transformer) {
-              final markerPositions =
-                  markers.map(transformer.fromLatLngToXYCoords).toList();
-
-              final markerWidgets = markerPositions.map(
-                (pos) => _buildMarkerWidget(pos, Colors.red),
-              );
-
+              final homeLocation =
+                  transformer.fromLatLngToXYCoords(_currentLocation);
+              final homeMarkerWidget =
+                  _buildMarkerWidget(homeLocation, Colors.red);
               return GestureDetector(
                   behavior: HitTestBehavior.opaque,
                   onDoubleTap: _onDoubleTap,
                   onScaleStart: _onScaleStart,
                   onScaleUpdate: _onScaleUpdate,
+                  onLongPress: _gotoDefault,
                   child: Listener(
                     behavior: HitTestBehavior.opaque,
                     onPointerSignal: (event) {
                       if (event is PointerScrollEvent) {
-                        final delta = event.scrollDelta * 4;
+                        final delta = event.scrollDelta * 5;
 
                         controller.zoom -= delta.dy / 1000.0;
                         setState(() {});
@@ -124,7 +118,7 @@ class _StationMapState extends State<StationMap> {
                             );
                           },
                         ),
-                        ...markerWidgets,
+                        homeMarkerWidget,
                       ],
                     ),
                   ));
