@@ -36,7 +36,7 @@ class Location {
 List<Station> stationList = [
   Station(
       name: 'Station 1',
-      location: Location(x: 100, y: 200),
+      location: Location(x: 16.596762, y: 108.121324),
       power: 100,
       state: false),
   Station(

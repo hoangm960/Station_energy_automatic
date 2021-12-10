@@ -7,7 +7,9 @@ const TextStyle infoTextStyle = TextStyle(
   fontSize: 18.0,
   fontWeight: FontWeight.w300,
 );
-const TextStyle boldTextStyle = TextStyle(
-  fontSize: 30.0,
-  fontWeight: FontWeight.bold
-);
+const TextStyle boldTextStyle =
+    TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold);
+
+Size getScreenSize(context) {
+  return MediaQuery.of(context).size;
+}

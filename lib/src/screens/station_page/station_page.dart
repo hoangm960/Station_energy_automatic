@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
@@ -31,16 +32,14 @@ class _StationScreenState extends State<StationScreen> {
         ),
         body: SafeArea(
             child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
+
                 child: Column(
                   children: [
                     Row(children: [
                       Expanded(
-                        flex: 3,
-                        child: Container(
-                          height: 750.0,
-                          color: Colors.black45,
-                        ),
+                        flex: 4,
+                        child: StationMap(station: station!),
                       ),
                       Expanded(
                         flex: 1,
