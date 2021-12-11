@@ -36,7 +36,8 @@ class StationGraphList extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: StationGraph(type: type ? 'currentDC' : 'currentAC', id: id),
+                child: StationGraph(
+                    type: type ? 'currentDC' : 'currentAC', id: id),
               ),
             ],
           ),
@@ -93,6 +94,7 @@ class _StationGraphState extends State<StationGraph> {
   @override
   void dispose() async {
     timer.cancel();
+    connection.then((connec) => connec.close());
     super.dispose();
   }
 
