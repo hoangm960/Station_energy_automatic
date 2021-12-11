@@ -48,8 +48,8 @@ class _StationScreenState extends State<StationScreen> {
                         ),
                       ),
                     ]),
-                    const StationGraphList(title: 'Output DC:'),
-                    const StationGraphList(title: 'Output AC:'),
+                    const StationGraphList(type: true, id: 2),
+                    const StationGraphList(type: false, id: 2),
                   ],
                 ))));
   }
