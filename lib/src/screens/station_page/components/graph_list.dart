@@ -33,15 +33,20 @@ class StationGraphList extends StatelessWidget {
                 child: StationGraph(
                   type: type ? 'voltDC' : 'voltAC',
                   id: id,
+                  unit: 'V',
                 ),
               ),
               Expanded(
                 child: StationGraph(
-                    type: type ? 'currentDC' : 'currentAC', id: id),
+                    type: type ? 'currentDC' : 'currentAC', id: id, unit: 'A'),
               ),
             ],
           ),
-          StationGraph(type: type ? 'voltDC * currentDC' : 'energyAC', id: id),
+          StationGraph(
+            type: type ? 'voltDC * currentDC' : 'energyAC',
+            id: id,
+            unit: 'kWh',
+          ),
         ],
       ),
     );
@@ -51,7 +56,9 @@ class StationGraphList extends StatelessWidget {
 class StationGraph extends StatefulWidget {
   final String type;
   final int id;
-  const StationGraph({Key? key, required this.type, required this.id})
+  final String unit;
+  const StationGraph(
+      {Key? key, required this.type, required this.id, required this.unit})
       : super(key: key);
 
   @override
@@ -76,7 +83,7 @@ class _StationGraphState extends State<StationGraph> {
       connection.query(sql).then((results) {
         for (var row in results) {
           setState(() {
-            value = row[0];
+            value = num.parse(row[0].toStringAsFixed(2)).toDouble();
           });
         }
       });
@@ -128,6 +135,11 @@ class _StationGraphState extends State<StationGraph> {
           borderColor: primaryColor,
           borderWidth: 2.0,
           enableAxisAnimation: true,
+          primaryXAxis: NumericAxis(isVisible: false),
+          primaryYAxis: NumericAxis(
+              labelFormat: '{value}${widget.unit}',
+              anchorRangeToVisiblePoints: false,
+              labelStyle: const TextStyle(color: Colors.black)),
           series: <LineSeries<ChartData, int>>[
             LineSeries<ChartData, int>(
                 onRendererCreated: (ChartSeriesController controller) {
