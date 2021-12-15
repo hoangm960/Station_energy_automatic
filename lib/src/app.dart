@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 
 import 'settings/settings_controller.dart';
@@ -37,7 +38,8 @@ class MyApp extends StatelessWidget {
           ],
           onGenerateTitle: (BuildContext context) =>
               AppLocalizations.of(context)!.appTitle,
-          theme: ThemeData(primaryColor: primaryColor, secondaryHeaderColor: secondaryColor),
+          theme: ThemeData(
+              primaryColor: primaryColor, secondaryHeaderColor: secondaryColor),
           darkTheme: ThemeData.dark(),
           themeMode: settingsController.themeMode,
           debugShowCheckedModeBanner: false,
@@ -53,6 +55,9 @@ class MyApp extends StatelessWidget {
                   case StationScreen.routeName:
                     Map stationArgs = routeSettings.arguments as Map;
                     return StationScreen(stationArgs['station']);
+                  case LiveStreamingPlayer.routeName:
+                    Map playerArgs = routeSettings.arguments as Map;
+                    return LiveStreamingPlayer(playerArgs['url']);
                   case HomePage.routeName:
                     return const HomePage();
                   default:

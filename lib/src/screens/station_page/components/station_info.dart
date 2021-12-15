@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 
 class StationInfo extends StatefulWidget {
   final Station station;
@@ -14,11 +15,11 @@ class StationInfo extends StatefulWidget {
 class _StationInfoState extends State<StationInfo> {
   String dropdownValue = 'One';
   late Future<MySqlConnection> connection;
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: getScreenSize(context).height - 18.0*2,
+      height: getScreenSize(context).height - 18.0 * 2,
       padding: const EdgeInsets.all(18.0),
       child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -103,6 +104,21 @@ class _StationInfoState extends State<StationInfo> {
                 children: const [
                   Text(
                     'Employee List',
+                    style: infoTextStyle,
+                  ),
+                  Icon(Icons.arrow_forward_ios_rounded),
+                ],
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.restorablePushNamed(
+                    context, LiveStreamingPlayer.routeName, arguments: <String, String>{'url': 'https://www.youtube.com/embed/Ceaf594pvs0'});
+              },
+              child: Row(
+                children: const [
+                  Text(
+                    'Security Camera',
                     style: infoTextStyle,
                   ),
                   Icon(Icons.arrow_forward_ios_rounded),

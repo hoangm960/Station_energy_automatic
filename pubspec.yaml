@@ -19,6 +19,7 @@ dependencies:
   map: ^1.0.0
   mysql1: ^0.19.2
   syncfusion_flutter_charts: ^19.3.57
+  webview_windows: ^0.1.0
 
 dev_dependencies:
   flutter_test:
