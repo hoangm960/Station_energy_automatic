@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
 
@@ -12,6 +13,7 @@ class StationInfo extends StatefulWidget {
 
 class _StationInfoState extends State<StationInfo> {
   String dropdownValue = 'One';
+  late Future<MySqlConnection> connection;
   
   @override
   Widget build(BuildContext context) {

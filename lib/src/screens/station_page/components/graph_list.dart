@@ -30,22 +30,44 @@ class StationGraphList extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: StationGraph(
-                  type: type ? 'voltDC' : 'voltAC',
-                  id: id,
-                  unit: 'V',
-                ),
-              ),
+                  child: Column(
+                children: [
+                  const Text(
+                    'Voltage:',
+                    style: boldTextStyle,
+                  ),
+                  StationGraph(
+                    type: type ? 'voltDC' : 'voltAC',
+                    id: id,
+                    unit: 'V',
+                  ),
+                ],
+              )),
               Expanded(
-                child: StationGraph(
-                    type: type ? 'currentDC' : 'currentAC', id: id, unit: 'A'),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Current:',
+                      style: boldTextStyle,
+                    ),
+                    StationGraph(
+                        type: type ? 'currentDC' : 'currentAC',
+                        id: id,
+                        unit: 'A'),
+                  ],
+                ),
               ),
             ],
           ),
-          StationGraph(
-            type: type ? 'voltDC * currentDC' : 'energyAC',
-            id: id,
-            unit: 'kWh',
+          Column(
+            children: [
+              const Text('Energy:', style: boldTextStyle,),
+              StationGraph(
+                type: type ? 'voltDC * currentDC' : 'energyAC',
+                id: id,
+                unit: 'kWh',
+              ),
+            ],
           ),
         ],
       ),
@@ -147,7 +169,8 @@ class _StationGraphState extends State<StationGraph> {
                 },
                 dataSource: chartData,
                 xValueMapper: (ChartData data, _) => data.x,
-                yValueMapper: (ChartData data, _) => data.y),
+                yValueMapper: (ChartData data, _) => data.y,
+                color: Colors.red),
           ]),
     );
   }

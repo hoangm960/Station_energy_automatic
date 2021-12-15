@@ -1,3 +1,5 @@
+import 'package:mysql1/mysql1.dart';
+
 class Station {
   final String name;
   Location location;
@@ -33,11 +35,32 @@ class Location {
   Location({required this.x, required this.y});
 }
 
+// late Future<MySqlConnection> connection;
+
+// connection.then((connection) {
+//   String sql =
+//       'SELECT ${widget.type} FROM station WHERE stationId = ${widget.id}';
+//   connection.query(sql).then((results) {
+//     for (var row in results) {
+//       setState(() {
+//         value = num.parse(row[0].toStringAsFixed(2)).toDouble();
+//       });
+//     }
+//   });
+// });
+
 List<Station> stationList = [
   Station(
       name: 'Station 1',
       location: Location(x: 16.596762, y: 108.121324),
-      power: 100,
+      voltDC: 3.27,
+      currentDC: 0.43,
+      voltAC: 230.20,
+      currentAC: 0.04,
+      power: 0.0,
+      energy: 0.02,
+      frequency: 50.20,
+      powerFactor: 0.0,
       state: false),
   Station(
       name: 'Station 2',
