@@ -98,7 +98,7 @@ class _StationGraphState extends State<StationGraph> {
   var db = Mysql();
   late Future<MySqlConnection> connection;
 
-  void _getParam() {
+  void _getParam() async {
     connection.then((connection) {
       String sql =
           'SELECT ${widget.type} FROM station WHERE stationId = ${widget.id}';
@@ -116,14 +116,15 @@ class _StationGraphState extends State<StationGraph> {
   void initState() {
     super.initState();
     timer = Timer.periodic(const Duration(seconds: 1), _updateDataSource);
-    connection = db.getConnection();
+    db.setConn();
+    connection = db.conn;
     _getParam();
   }
 
   @override
   void dispose() async {
     timer.cancel();
-    connection.then((connec) => connec.close());
+    connection.then((conn) => conn.close());
     super.dispose();
   }
 

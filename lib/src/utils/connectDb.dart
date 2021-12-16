@@ -3,17 +3,17 @@ import 'dart:async';
 import 'package:mysql1/mysql1.dart';
 
 class Mysql {
-  static String host = 'khktdb.ddns.net',
-      user = 'minh',
-      db = 'khkt_sql',
-      password = 'nhatminhb5/2901';
-  static int port = 3306;
+  var conn;
 
   Mysql();
-
-  Future<MySqlConnection> getConnection() async {
-    var settings = ConnectionSettings(
-        host: host, port: port, user: user, password: password, db: db);
-    return await MySqlConnection.connect(settings);
+  Future setConn() async {
+    
+    // ignore: unnecessary_this
+    this.conn =  MySqlConnection.connect(ConnectionSettings(
+        host: 'khktdb.ddns.net',
+        port: 3306,
+        user: 'root',
+        db: 'khkt_sql',
+        password: 'KhktNH123@@'));
   }
 }

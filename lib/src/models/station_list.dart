@@ -9,7 +9,7 @@ class StationList {
   StationList();
 
   List<Station> getData() {
-    connection = db.getConnection();
+    connection = db.conn;
     connection.then((connection) {
       String sql = 'SELECT * FROM station WHERE stationId = 2';
       connection.query(sql).then((results) {
