@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
@@ -61,7 +60,10 @@ class StationGraphList extends StatelessWidget {
           ),
           Column(
             children: [
-              const Text('Energy:', style: boldTextStyle,),
+              const Text(
+                'Energy:',
+                style: boldTextStyle,
+              ),
               StationGraph(
                 type: type ? 'voltDC * currentDC' : 'energyAC',
                 id: id,
@@ -90,9 +92,7 @@ class StationGraph extends StatefulWidget {
 class _StationGraphState extends State<StationGraph> {
   int time = 1;
   List<ChartData> chartData = [];
-  int count = 7;
   late Timer timer;
-  final random = Random();
   ChartSeriesController? _chartSeriesController;
   double value = 0.0;
   var db = Mysql();

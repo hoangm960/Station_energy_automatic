@@ -3,7 +3,6 @@ import 'package:ocean_station_auto/src/screens/home/components/station_list_modu
 import 'package:ocean_station_auto/src/models/station_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
-import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import '../../settings/settings_view.dart';
 
 class HomePage extends StatefulWidget {
