@@ -6,7 +6,7 @@ class Mysql {
   var conn;
 
   Mysql();
-  Future setConn() async {
+  void setConn() async {
     
     // ignore: unnecessary_this
     this.conn =  MySqlConnection.connect(ConnectionSettings(

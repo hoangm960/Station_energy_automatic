@@ -1,12 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station_model.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
+import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
 class StationInfo extends StatefulWidget {
-  final Station station;
-  const StationInfo({Key? key, required this.station}) : super(key: key);
+  final int index;
+  const StationInfo({Key? key, required this.index}) : super(key: key);
 
   @override
   State<StationInfo> createState() => _StationInfoState();
@@ -14,7 +16,44 @@ class StationInfo extends StatefulWidget {
 
 class _StationInfoState extends State<StationInfo> {
   String dropdownValue = 'One';
+  var db = Mysql();
   late Future<MySqlConnection> connection;
+  late Timer timer;
+  late Station _station;
+
+  void _getParam(Timer timer) async {
+    connection.then((connection) {
+      String sql =
+          'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, energyAC, frequencyAC, powerfactorAC, state FROM station';
+      connection.query(sql).then((results) {
+        for (var row in results) {
+          setState(() {
+            _station = Station(
+                name: row[0],
+                location: Location(x: row[1], y: row[2]),
+                voltDC: row[3],
+                currentDC: row[4],
+                voltAC: row[5],
+                currentAC: row[6],
+                power: row[7],
+                energy: row[8],
+                frequency: row[9],
+                powerFactor: row[10],
+                state: row[11] == 1 ? true : false);
+          });
+        }
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 5), _getParam);
+    db.setConn();
+    connection = db.conn;
+    _station = stationList[widget.index];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,35 +65,35 @@ class _StationInfoState extends State<StationInfo> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Text(
-              'Location: ${widget.station.location.x} ${widget.station.location.y}',
+              'Location: ${_station.location.x} ${_station.location.y}',
               style: infoTextStyle,
             ),
             Text(
-              'VoltDC: ${widget.station.voltDC} V',
+              'VoltDC: ${_station.voltDC} V',
               style: infoTextStyle,
             ),
             Text(
-              'CurrentDC: ${widget.station.currentDC} A',
+              'CurrentDC: ${_station.currentDC} A',
               style: infoTextStyle,
             ),
             Text(
-              'VoltAC: ${widget.station.voltAC} V',
+              'VoltAC: ${_station.voltAC} V',
               style: infoTextStyle,
             ),
             Text(
-              'CurrentAC: ${widget.station.currentAC} A',
+              'CurrentAC: ${_station.currentAC} A',
               style: infoTextStyle,
             ),
             Text(
-              'Power: ${widget.station.power} W',
+              'Power: ${_station.power} W',
               style: infoTextStyle,
             ),
             Text(
-              'Energy: ${widget.station.energy} kW/h',
+              'Energy: ${_station.energy} kW/h',
               style: infoTextStyle,
             ),
             Text(
-              'Power Factor: ${widget.station.powerFactor}',
+              'Power Factor: ${_station.powerFactor}',
               style: infoTextStyle,
             ),
             Center(
@@ -64,7 +103,7 @@ class _StationInfoState extends State<StationInfo> {
                     'State: ',
                     style: infoTextStyle,
                   ),
-                  widget.station.state
+                  _station.state
                       ? Row(
                           children: const [
                             Text(
@@ -113,7 +152,10 @@ class _StationInfoState extends State<StationInfo> {
             InkWell(
               onTap: () {
                 Navigator.restorablePushNamed(
-                    context, LiveStreamingPlayer.routeName, arguments: <String, String>{'url': 'https://www.youtube.com/embed/Ceaf594pvs0'});
+                    context, LiveStreamingPlayer.routeName,
+                    arguments: <String, String>{
+                      'url': 'https://www.youtube.com/embed/Ceaf594pvs0'
+                    });
               },
               child: Row(
                 children: const [

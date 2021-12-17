@@ -8,28 +8,32 @@ class StationList {
   List<Station> stationList = [];
   StationList();
 
-  List<Station> getData() {
+  void getData() {
+    db.setConn();
     connection = db.conn;
     connection.then((connection) {
-      String sql = 'SELECT * FROM station WHERE stationId = 2';
+      String sql =
+          'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, energyAC, frequencyAC, powerfactorAC, state FROM station WHERE stationId = 2';
       connection.query(sql).then((results) {
-        for (var row in results) {
-          stationList.add(Station(
-              name: row[1],
-              location: Location(x: 16, y: 18),
-              voltDC: row[4],
-              currentDC: row[5],
-              voltAC: row[6],
-              currentAC: row[7],
-              power: row[8],
-              energy: row[9],
-              frequency: row[10],
-              powerFactor: row[11],
-              state: row[12]));
-        }
+        print(results);
       });
-      connection.close();
+
+      // for (var row in results) {
+      //   // ignore: unnecessary_this
+      //   this.stationList.add(Station(
+      //       name: row[0],
+      //       location: Location(x: row[1], y: row[2]),
+      //       voltDC: row[3],
+      //       currentDC: row[4],
+      //       voltAC: row[5],
+      //       currentAC: row[6],
+      //       power: row[7],
+      //       energy: row[8],
+      //       frequency: row[9],
+      //       powerFactor: row[10],
+      //       state: row[11]));
+      // }
+      // await connection.close();
     });
-    return stationList;
   }
 }

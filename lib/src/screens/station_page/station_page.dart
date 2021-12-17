@@ -33,7 +33,6 @@ class _StationScreenState extends State<StationScreen> {
         body: SafeArea(
             child: SingleChildScrollView(
                 physics: const NeverScrollableScrollPhysics(),
-
                 child: Column(
                   children: [
                     Row(children: [
@@ -43,9 +42,7 @@ class _StationScreenState extends State<StationScreen> {
                       ),
                       Expanded(
                         flex: 1,
-                        child: StationInfo(
-                          station: station!,
-                        ),
+                        child: StationInfo(index: widget.index,),
                       ),
                     ]),
                     const StationGraphList(type: true, id: 2),
