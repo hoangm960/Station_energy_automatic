@@ -5,7 +5,7 @@ import 'package:webview_windows/webview_windows.dart';
 
 class LiveStreamingPlayer extends StatefulWidget {
   final String url;
-  LiveStreamingPlayer(this.url);
+  const LiveStreamingPlayer(this.url, {Key? key}) : super(key: key);
 
   static const routeName = '/camera';
 

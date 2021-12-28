@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
+import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/hashPw.dart';
 
 class LoginPage extends StatefulWidget {
   static const routeName = '/login';
+
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -9,6 +14,46 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool hidePassword = true;
+  final nameController = TextEditingController();
+  final passwordController = TextEditingController();
+  var db = Mysql();
+  late Future<MySqlConnection> connection;
+
+  @override
+  void initState() {
+    super.initState();
+    db.setConn();
+    connection = db.conn;
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
+
+  void checkData() {
+    String username = nameController.text;
+    String pw = getEncrypt(passwordController.text, username);
+    connection.then((conn) {
+      String sql = 'SELECT password FROM user WHERE name = "$username"';
+      conn.query(sql).then((value) {
+        if (value.isNotEmpty) {
+          for (var row in value) {
+            if (pw == row[0]) {
+              print('found');
+            }
+          }
+        } else {
+          print('not found');
+        }
+
+        conn.close();
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,13 +125,14 @@ class _LoginPageState extends State<LoginPage> {
                                     border: Border(
                                         bottom: BorderSide(
                                             color: Colors.grey[200]!))),
-                                child: const TextField(
-                                  decoration: InputDecoration(
-                                    hintText: "Email or Phone number",
+                                child: TextField(
+                                  controller: nameController,
+                                  decoration: const InputDecoration(
+                                    hintText: "Username",
                                     hintStyle: TextStyle(color: Colors.grey),
                                     border: InputBorder.none,
                                   ),
-                                  style: TextStyle(color: Colors.black),
+                                  style: const TextStyle(color: Colors.black),
                                 ),
                               ),
                               Container(
@@ -96,13 +142,20 @@ class _LoginPageState extends State<LoginPage> {
                                         bottom: BorderSide(
                                             color: Colors.grey[200]!))),
                                 child: TextField(
+                                  controller: passwordController,
                                   decoration: InputDecoration(
                                       hintText: "Password",
-                                      hintStyle: const TextStyle(color: Colors.grey),
+                                      hintStyle:
+                                          const TextStyle(color: Colors.grey),
                                       border: InputBorder.none,
-                                      suffixIcon: IconButton(onPressed: () {setState(() {
-                                        hidePassword = !hidePassword;
-                                      });}, icon: const Icon(Icons.remove_red_eye_outlined))),
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              hidePassword = !hidePassword;
+                                            });
+                                          },
+                                          icon: const Icon(
+                                              Icons.remove_red_eye_outlined))),
                                   style: const TextStyle(color: Colors.black),
                                   obscureText: hidePassword,
                                   enableSuggestions: false,
@@ -115,27 +168,23 @@ class _LoginPageState extends State<LoginPage> {
                         const SizedBox(
                           height: 40,
                         ),
-                        const Text(
-                          "Forgot Password?",
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Container(
-                          height: 50,
-                          margin: const EdgeInsets.symmetric(horizontal: 50),
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                              color: Colors.orange[900]),
-                          child: const Center(
-                            child: Text(
-                              "Login",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                        InkWell(
+                          onTap: () => checkData(),
+                          child: Container(
+                              height: 50,
+                              margin:
+                                  const EdgeInsets.symmetric(horizontal: 50),
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(50),
+                                  color: Colors.orange[900]),
+                              child: const Center(
+                                child: Text(
+                                  "Login",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )),
                         ),
                       ],
                     ),

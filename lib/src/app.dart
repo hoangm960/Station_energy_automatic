@@ -60,11 +60,11 @@ class MyApp extends StatelessWidget {
                     Map playerArgs = routeSettings.arguments as Map;
                     return LiveStreamingPlayer(playerArgs['url']);
                   case LoginPage.routeName:
-                    return LoginPage();
+                    return const LoginPage();
                   case HomePage.routeName:
                     return const HomePage();
                   default:
-                    return LoginPage();
+                    return const LoginPage();
                 }
               },
             );
