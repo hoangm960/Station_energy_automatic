@@ -24,7 +24,7 @@ class _StationInfoState extends State<StationInfo> {
   void _getParam(Timer timer) async {
     connection.then((connection) {
       String sql =
-          'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, energyAC, frequencyAC, powerfactorAC, state FROM station';
+          'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, frequencyAC, powerfactorAC, state FROM station';
       connection.query(sql).then((results) {
         for (var row in results) {
           setState(() {
@@ -39,7 +39,7 @@ class _StationInfoState extends State<StationInfo> {
                 energy: row[8],
                 frequency: row[9],
                 powerFactor: row[10],
-                state: row[11] == 1 ? true : false);
+                state: (row[11] == 1) ? true : false);
           });
         }
       });
@@ -90,6 +90,10 @@ class _StationInfoState extends State<StationInfo> {
             ),
             Text(
               'Energy: ${_station.energy} kW/h',
+              style: infoTextStyle,
+            ),
+            Text(
+              'Frequency: ${_station.frequency} Hz',
               style: infoTextStyle,
             ),
             Text(
@@ -154,7 +158,7 @@ class _StationInfoState extends State<StationInfo> {
                 Navigator.restorablePushNamed(
                     context, LiveStreamingPlayer.routeName,
                     arguments: <String, String>{
-                      'url': 'https://www.youtube.com/embed/Ceaf594pvs0'
+                      'url': 'https://www.youtube.com/embed/fEZcqfNGiQg'
                     });
               },
               child: Row(
