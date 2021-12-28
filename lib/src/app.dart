@@ -3,6 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
+import 'package:ocean_station_auto/src/screens/login_page.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
@@ -58,10 +59,12 @@ class MyApp extends StatelessWidget {
                   case LiveStreamingPlayer.routeName:
                     Map playerArgs = routeSettings.arguments as Map;
                     return LiveStreamingPlayer(playerArgs['url']);
+                  case LoginPage.routeName:
+                    return LoginPage();
                   case HomePage.routeName:
                     return const HomePage();
                   default:
-                    return const HomePage();
+                    return LoginPage();
                 }
               },
             );
