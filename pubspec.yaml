@@ -19,6 +19,7 @@ dependencies:
   intl: ^0.17.0 
   map: ^1.0.0
   mysql1: ^0.19.2
+  shared_preferences: ^2.0.11
   syncfusion_flutter_charts: ^19.3.57
   webview_windows: ^0.1.0
 
