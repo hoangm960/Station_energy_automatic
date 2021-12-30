@@ -6,7 +6,10 @@ class TextBox extends StatefulWidget {
   final bool decorationPassword;
   final controller = TextEditingController();
   TextBox(
-      {Key? key, this.text = '',this.decorationPassword = false, required this.hintText})
+      {Key? key,
+      this.text = '',
+      this.decorationPassword = false,
+      required this.hintText})
       : super(key: key);
 
   @override
@@ -15,17 +18,26 @@ class TextBox extends StatefulWidget {
 
 class _TextBoxState extends State<TextBox> {
   late bool hidePassword;
+  Color borderColor = Colors.transparent;
+  late String text;
 
   @override
   void initState() {
     super.initState();
     hidePassword = widget.decorationPassword;
+    text = widget.text;
   }
 
   @override
   void dispose() {
     widget.controller.dispose();
     super.dispose();
+  }
+
+  void setBorderColor(color) {
+    setState(() {
+      borderColor = color;
+    });
   }
 
   @override
@@ -35,7 +47,7 @@ class _TextBoxState extends State<TextBox> {
       decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
       child: TextField(
-        controller: widget.controller..text = widget.text,
+        controller: widget.controller..text = text,
         decoration: widget.decorationPassword
             ? InputDecoration(
                 hintText: "Password",
@@ -45,6 +57,7 @@ class _TextBoxState extends State<TextBox> {
                     onPressed: () {
                       setState(() {
                         hidePassword = !hidePassword;
+                        text = widget.controller.text;
                       });
                     },
                     icon: const Icon(Icons.remove_red_eye_outlined)))

@@ -38,11 +38,11 @@ class _SignInScreenState extends State<SignInScreen> {
                   context, HomePage.routeName, (_) => false);
             }
           }
+          // conn.close();
         } else {
           print('not found');
         }
 
-        conn.close();
       });
     });
   }
