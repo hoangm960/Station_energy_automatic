@@ -3,7 +3,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
-import 'package:ocean_station_auto/src/screens/login_page.dart';
+import 'package:ocean_station_auto/src/screens/login_page/login_page.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
