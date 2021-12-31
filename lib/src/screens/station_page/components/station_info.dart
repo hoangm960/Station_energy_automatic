@@ -27,20 +27,22 @@ class _StationInfoState extends State<StationInfo> {
           'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, frequencyAC, powerfactorAC, state FROM station';
       connection.query(sql).then((results) {
         for (var row in results) {
-          setState(() {
-            _station = Station(
-                name: row[0],
-                location: Location(x: row[1], y: row[2]),
-                voltDC: row[3],
-                currentDC: row[4],
-                voltAC: row[5],
-                currentAC: row[6],
-                power: row[7],
-                energy: row[8],
-                frequency: row[9],
-                powerFactor: row[10],
-                state: (row[11] == 1) ? true : false);
-          });
+          if (mounted) {
+            setState(() {
+              _station = Station(
+                  name: row[0],
+                  location: Location(x: row[1], y: row[2]),
+                  voltDC: row[3],
+                  currentDC: row[4],
+                  voltAC: row[5],
+                  currentAC: row[6],
+                  power: row[7],
+                  energy: row[8],
+                  frequency: row[9],
+                  powerFactor: row[10],
+                  state: (row[11] == 1) ? true : false);
+            });
+          }
         }
       });
     });
