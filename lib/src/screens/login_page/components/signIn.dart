@@ -1,9 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
+import 'package:ocean_station_auto/src/constant.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -14,7 +19,13 @@ class SignInScreen extends StatefulWidget {
 
 class _SignInScreenState extends State<SignInScreen> {
   bool hidePassword = true;
-  List<TextBox> userBoxes = [TextBox(hintText: 'Username'), TextBox(hintText: 'Password', decorationPassword: true,)];
+  List<TextBox> userBoxes = [
+    TextBox(hintText: 'Username'),
+    TextBox(
+      hintText: 'Password',
+      decorationPassword: true,
+    )
+  ];
   var db = Mysql();
   late Future<MySqlConnection> connection;
 
@@ -25,24 +36,51 @@ class _SignInScreenState extends State<SignInScreen> {
     connection = db.conn;
   }
 
+  Future<File> writeData(var data) async {
+    Paths paths = Paths();
+    final file = await paths.userFile;
+
+    return file.writeAsString(json.encode(data));
+  }
+
+  void saveUser(id) {
+    connection.then((conn) {
+      String sql =
+          '''SELECT u.name, displayName, t.name 
+            FROM user u
+            LEFT JOIN type t USING (typeId)
+            WHERE userId = $id''';
+      conn.query(sql).then((value) {
+        if (value.isNotEmpty) {
+          for (var row in value) {
+            Map userData =
+                User(username: row[0], displayName: row[1], type: row[2])
+                    .toJson();
+            writeData(userData);
+          }
+        }
+      });
+      conn.close();
+    });
+  }
+
   void checkData() {
     String username = userBoxes[0].controller.text;
     String pw = getEncrypt(userBoxes[1].controller.text, username);
     connection.then((conn) {
-      String sql = 'SELECT password FROM user WHERE name = "$username"';
+      String sql = 'SELECT userId, password FROM user WHERE name = "$username"';
       conn.query(sql).then((value) {
         if (value.isNotEmpty) {
           for (var row in value) {
-            if (pw == row[0]) {
+            if (pw == row[1]) {
+              saveUser(row[0]);
               Navigator.pushNamedAndRemoveUntil(
                   context, HomePage.routeName, (_) => false);
             }
           }
-          // conn.close();
         } else {
           print('not found');
         }
-
       });
     });
   }
