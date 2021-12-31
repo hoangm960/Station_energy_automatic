@@ -28,7 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
   ];
   var db = Mysql();
   late Future<MySqlConnection> connection;
-
+  Color borderColor = Colors.transparent;
   @override
   void initState() {
     super.initState();
@@ -79,7 +79,9 @@ class _SignInScreenState extends State<SignInScreen> {
             }
           }
         } else {
-          print('not found');
+          setState(() {
+            borderColor = Colors.redAccent;
+          });
         }
       });
     });
@@ -95,6 +97,7 @@ class _SignInScreenState extends State<SignInScreen> {
         Container(
           decoration: BoxDecoration(
               color: Colors.white,
+              border: Border.all(color: borderColor),
               borderRadius: BorderRadius.circular(10),
               boxShadow: const [
                 BoxShadow(

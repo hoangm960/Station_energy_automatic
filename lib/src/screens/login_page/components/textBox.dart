@@ -18,7 +18,6 @@ class TextBox extends StatefulWidget {
 
 class _TextBoxState extends State<TextBox> {
   late bool hidePassword;
-  Color borderColor = Colors.transparent;
   late String text;
 
   @override
@@ -34,18 +33,12 @@ class _TextBoxState extends State<TextBox> {
     super.dispose();
   }
 
-  void setBorderColor(color) {
-    setState(() {
-      borderColor = color;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          border: Border(bottom: BorderSide(color: Colors.grey[200]!))),
+          border: Border(bottom: BorderSide(color: Colors.grey[200]!)),),
       child: TextField(
         controller: widget.controller..text = text,
         decoration: widget.decorationPassword
