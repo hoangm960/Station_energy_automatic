@@ -2,13 +2,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
-import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:ocean_station_auto/src/models/location.dart';
+import 'package:ocean_station_auto/src/models/station_list.dart';
+import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
 class StationInfo extends StatefulWidget {
   final int index;
-  const StationInfo({Key? key, required this.index}) : super(key: key);
+  final Station station;
+  const StationInfo({Key? key, required this.index, required this.station}) : super(key: key);
 
   @override
   State<StationInfo> createState() => _StationInfoState();
@@ -20,6 +23,15 @@ class _StationInfoState extends State<StationInfo> {
   late Future<MySqlConnection> connection;
   late Timer timer;
   late Station _station;
+
+  @override
+  void initState() {
+    super.initState();
+    timer = Timer.periodic(const Duration(seconds: 5), _getParam);
+    db.setConn();
+    connection = db.conn;
+    _station = widget.station;
+  }
 
   void _getParam(Timer timer) async {
     connection.then((connection) {
@@ -46,15 +58,6 @@ class _StationInfoState extends State<StationInfo> {
         }
       });
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    timer = Timer.periodic(const Duration(seconds: 5), _getParam);
-    db.setConn();
-    connection = db.conn;
-    _station = stationList[widget.index];
   }
 
   @override

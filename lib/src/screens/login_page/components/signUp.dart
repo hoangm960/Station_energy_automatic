@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:ocean_station_auto/src/screens/home/home_page.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';

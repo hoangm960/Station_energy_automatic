@@ -1,18 +1,36 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:ocean_station_auto/src/constant.dart';
+import 'package:ocean_station_auto/src/models/station_list.dart';
+import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 
-class StationList extends StatefulWidget {
-  final List<Station> stations;
-
-  const StationList(this.stations, {Key? key}) : super(key: key);
+class StationListView extends StatefulWidget {
+  const StationListView({Key? key}) : super(key: key);
 
   @override
-  _StationListState createState() => _StationListState();
+  _StationListViewState createState() => _StationListViewState();
 }
 
-class _StationListState extends State<StationList> {
-  Widget _buildStationCard(int index) {
+class _StationListViewState extends State<StationListView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  Future<List<Station>> _getStation() async {
+    await StationList().init();
+    Paths paths = Paths();
+    final file = await paths.stationsFile;
+
+    final contents = await file.readAsString();
+    final List jsonStations = json.decode(contents);
+    return List.generate(
+        jsonStations.length, (index) => Station.fromJson(jsonStations[index]));
+  }
+
+  Widget _buildStationCard(int index, Station station) {
     return Card(
       elevation: 5.0,
       child: InkWell(
@@ -27,7 +45,7 @@ class _StationListState extends State<StationList> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
-                widget.stations[index].name,
+                station.name,
                 style: const TextStyle(
                     fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
@@ -38,11 +56,11 @@ class _StationListState extends State<StationList> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Text(widget.stations[index].location.x.toString()),
+                      Text(station.location.x.toString()),
                       const VerticalDivider(
                         width: 5.0,
                       ),
-                      Text(widget.stations[index].location.y.toString()),
+                      Text(station.location.y.toString()),
                     ],
                   ),
                 ],
@@ -51,7 +69,7 @@ class _StationListState extends State<StationList> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Power: '),
-                  Text(widget.stations[index].power.toString() + '(W)')
+                  Text(station.power.toString() + '(W)')
                 ],
               ),
               Row(
@@ -61,7 +79,7 @@ class _StationListState extends State<StationList> {
                   const SizedBox(
                     width: 38.0,
                   ),
-                  widget.stations[index].state
+                  station.state
                       ? Row(
                           children: const [
                             Text(
@@ -103,11 +121,16 @@ class _StationListState extends State<StationList> {
 
   @override
   Widget build(BuildContext context) {
-    return GridView.extent(
-      maxCrossAxisExtent: 300,
-      padding: const EdgeInsets.all(10.0),
-      children: List.generate(
-          widget.stations.length, (index) => _buildStationCard(index)),
+    return FutureBuilder<List<Station>>(
+      future: _getStation(),
+      builder: (BuildContext context, AsyncSnapshot<List<Station>> snapshot) {
+        return GridView.extent(
+          maxCrossAxisExtent: 300,
+          padding: const EdgeInsets.all(10.0),
+          children: snapshot.hasData ? List.generate(snapshot.data!.length,
+              (index) => _buildStationCard(index, snapshot.data![index])) : [const CircularProgressIndicator()],
+        );
+      }
     );
   }
 }

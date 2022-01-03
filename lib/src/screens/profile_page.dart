@@ -15,14 +15,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? user;
+  User? _user;
 
   @override
   void initState() {
     super.initState();
     getUser().then((value) {
       setState(() {
-        user = value;
+        _user = value;
       });
     });
   }
@@ -58,15 +58,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Username:    ${user?.username ?? ''}"),
+              Text("Username:    ${_user?.username ?? ''}"),
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Display name:    ${user?.displayName ?? ''}"),
+              Text("Display name:    ${_user?.displayName ?? ''}"),
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Type:    ${user?.type ?? ''}"),
+              Text("Type:    ${_user?.type ?? ''}"),
               const SizedBox(
                 height: 20.0,
               ),

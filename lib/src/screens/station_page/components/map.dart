@@ -4,7 +4,7 @@ import 'package:latlng/latlng.dart';
 import 'package:map/map.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ocean_station_auto/src/models/station_model.dart';
+import 'package:ocean_station_auto/src/models/station.dart';
 
 class StationMap extends StatefulWidget {
   final Station station;

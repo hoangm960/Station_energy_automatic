@@ -8,13 +8,26 @@ class User {
   final String username;
   final String displayName;
   final String type;
-
+  var db = Mysql();
+  late MySqlConnection connection;
 
   User({required this.username, required this.displayName, required this.type});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   Map<String, dynamic> toJson() => _$UserToJson(this);
+
+  Future<int> getTypeId() async {
+    int id = 0;
+    db.setConn();
+    connection = await db.conn;
+    String sql = 'SELECT typeId FROM type WHERE name = $type';
+    var results = await connection.query(sql);
+    for (var row in results) {
+      id = row[0];
+    }
+    return id;
+  }
 }
 
 class Type {

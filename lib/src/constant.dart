@@ -27,4 +27,9 @@ class Paths {
     final path = await localPath;
     return File('$path/user.json');
   }
+
+  Future<File> get stationsFile async {
+    final path = await localPath;
+    return File('$path/stations.json');
+  }
 }
