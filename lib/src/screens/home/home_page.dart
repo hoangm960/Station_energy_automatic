@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/screens/home/components/add_station.dart';
-import 'package:ocean_station_auto/src/screens/home/components/station_list_module.dart';
+import 'package:ocean_station_auto/src/screens/home/components/station_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import '../../settings/settings_view.dart';
@@ -15,10 +18,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  StationListView stationList = StationListView();
+  StationListView stationList = const StationListView();
+
+  
+
   void refresh() {
     setState(() {
-      stationList = StationListView();
+      stationList = const StationListView();
     });
   }
 
