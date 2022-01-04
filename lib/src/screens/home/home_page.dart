@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ocean_station_auto/src/screens/home/components/add_station.dart';
 import 'package:ocean_station_auto/src/screens/home/components/station_list_module.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
@@ -14,8 +15,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void addStation() {
+  StationListView stationList = StationListView();
+  void refresh() {
+    setState(() {
+      stationList = StationListView();
+    });
+  }
 
+  void addStation() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) => AddStation(notifyParrent: refresh));
+    setState(() {});
   }
 
   @override
@@ -40,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: const StationListView(),
+      body: stationList,
       floatingActionButton: FloatingActionButton(
         onPressed: () => addStation(),
         child: const Icon(Icons.add),

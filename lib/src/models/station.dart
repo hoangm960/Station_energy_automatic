@@ -9,27 +9,27 @@ class Station {
   final String name;
   Location location;
   final bool state;
-  final double? voltDC;
-  final double? currentDC;
-  final double? voltAC;
-  final double? currentAC;
-  final double? power;
-  final double? energy;
-  final double? frequency;
-  final double? powerFactor;
+  final double voltDC;
+  final double currentDC;
+  final double voltAC;
+  final double currentAC;
+  final double power;
+  final double energy;
+  final double frequency;
+  final double powerFactor;
 
   Station({
     required this.name,
     required this.location,
     required this.power,
-    required this.state,
-    this.voltDC,
-    this.currentDC,
-    this.voltAC,
-    this.currentAC,
-    this.energy,
-    this.frequency,
-    this.powerFactor,
+    this.state = true,
+    this.voltDC = 0.0,
+    this.currentDC = 0.0,
+    this.voltAC = 0.0,
+    this.currentAC = 0.0,
+    this.energy = 0.0,
+    this.frequency = 0.0,
+    this.powerFactor = 0.0,
   });
 
   factory Station.fromJson(Map<String, dynamic> json) => _$StationFromJson(json);

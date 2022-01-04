@@ -6,7 +6,7 @@ class Location {
   final double x;
   final double y;
 
-  Location({required this.x, required this.y});
+  Location({this.x = 0.0, this.y = 0.0});
 
   factory Location.fromJson(Map<String, dynamic> json) =>
       _$LocationFromJson(json);

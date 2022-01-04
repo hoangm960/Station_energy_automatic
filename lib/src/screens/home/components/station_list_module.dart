@@ -14,11 +14,6 @@ class StationListView extends StatefulWidget {
 }
 
 class _StationListViewState extends State<StationListView> {
-  @override
-  void initState() {
-    super.initState();
-  }
-
   Future<List<Station>> _getStation() async {
     await StationList().init();
     Paths paths = Paths();
@@ -128,7 +123,7 @@ class _StationListViewState extends State<StationListView> {
           maxCrossAxisExtent: 300,
           padding: const EdgeInsets.all(10.0),
           children: snapshot.hasData ? List.generate(snapshot.data!.length,
-              (index) => _buildStationCard(index, snapshot.data![index])) : [const CircularProgressIndicator()],
+              (index) => _buildStationCard(index, snapshot.data![index])) : [const Center(child: CircularProgressIndicator())],
         );
       }
     );
