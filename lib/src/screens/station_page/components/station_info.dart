@@ -1,17 +1,21 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/location.dart';
-import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
+enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+
 class StationInfo extends StatefulWidget {
   final int index;
   final Station station;
-  const StationInfo({Key? key, required this.index, required this.station}) : super(key: key);
+  const StationInfo({Key? key, required this.index, required this.station})
+      : super(key: key);
 
   @override
   State<StationInfo> createState() => _StationInfoState();
@@ -20,44 +24,71 @@ class StationInfo extends StatefulWidget {
 class _StationInfoState extends State<StationInfo> {
   String dropdownValue = 'One';
   var db = Mysql();
-  late Future<MySqlConnection> connection;
+  late MySqlConnection connection;
   late Timer timer;
   late Station _station;
+  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 5), _getParam);
-    db.setConn();
-    connection = db.conn;
+    setUpConn();
     _station = widget.station;
   }
 
-  void _getParam(Timer timer) async {
-    connection.then((connection) {
-      String sql =
-          'SELECT name, ST_X(Location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, frequencyAC, powerfactorAC, state FROM station';
-      connection.query(sql).then((results) {
-        for (var row in results) {
-          if (mounted) {
-            setState(() {
-              _station = Station(
-                  name: row[0],
-                  location: Location(x: row[1], y: row[2]),
-                  voltDC: row[3],
-                  currentDC: row[4],
-                  voltAC: row[5],
-                  currentAC: row[6],
-                  power: row[7],
-                  energy: row[8],
-                  frequency: row[9],
-                  powerFactor: row[10],
-                  state: (row[11] == 1) ? true : false);
-            });
-          }
-        }
-      });
+  @override
+  void dispose() {
+    connection.close();
+    super.dispose();
+  }
+
+  void setUpConn() async {
+    setState(() {
+      _connState = ConnectionState.LOADING;
     });
+    MySqlConnection _connection = await db.getConn();
+    setState(() {
+      connection = _connection;
+      _connState = ConnectionState.FINISHED;
+    });
+    timer = Timer.periodic(const Duration(seconds: 5), _getParam);
+  }
+
+  void _getParam(Timer timer) async {
+    String sql = await _getCmd();
+    var results = await connection.query(sql, [widget.station.id]);
+    for (var row in results) {
+      if (mounted) {
+        setState(() {
+          _station = Station(
+              id: row[0],
+              name: row[1],
+              location: Location(x: row[2], y: row[3]),
+              voltDC: row[4],
+              currentDC: row[5],
+              voltAC: row[6],
+              currentAC: row[7],
+              power: row[8],
+              energy: row[9],
+              frequency: row[10],
+              powerFactor: row[11],
+              state: (row[12] == 1) ? true : false);
+        });
+      }
+    }
+  }
+
+  Future<String> _getCmd() async {
+    String cmd = '';
+    String sql = '''SELECT sqlFunction FROM permission 
+        WHERE permissionId IN 
+          (SELECT permissionId FROM type_permission WHERE typeId IN (1,2)) 
+        AND name = "Get station data"''';
+    var results = await connection.query(sql);
+    for (var row in results) {
+      cmd = row[0].toString().replaceAll('{}', '?');
+    }
+    return cmd;
   }
 
   @override
@@ -162,9 +193,7 @@ class _StationInfoState extends State<StationInfo> {
               onTap: () {
                 Navigator.restorablePushNamed(
                     context, LiveStreamingPlayer.routeName,
-                    arguments: <String, String>{
-                      'url': 'https://www.youtube.com/embed/fEZcqfNGiQg'
-                    });
+                    arguments: <String, int>{'index': widget.index});
               },
               child: Row(
                 children: const [

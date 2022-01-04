@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -5,6 +7,8 @@ import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+
+enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
 
 class StationGraphList extends StatelessWidget {
   const StationGraphList({
@@ -96,19 +100,18 @@ class _StationGraphState extends State<StationGraph> {
   ChartSeriesController? _chartSeriesController;
   double value = 0.0;
   var db = Mysql();
-  late Future<MySqlConnection> connection;
+  late MySqlConnection connection;
+  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
 
   void _getParam() async {
-    connection.then((connection) {
-      String sql =
-          'SELECT ${widget.type} FROM station WHERE stationId = ${widget.id}';
-      connection.query(sql).then((results) {
-        for (var row in results) {
-          setState(() {
-            value = num.parse(row[0].toStringAsFixed(2)).toDouble();
-          });
-        }
-      });
+    String sql =
+        'SELECT ${widget.type} FROM station WHERE stationId = ${widget.id}';
+    connection.query(sql).then((results) {
+      for (var row in results) {
+        setState(() {
+          value = num.parse(row[0].toStringAsFixed(2)).toDouble();
+        });
+      }
     });
   }
 
@@ -116,15 +119,26 @@ class _StationGraphState extends State<StationGraph> {
   void initState() {
     super.initState();
     timer = Timer.periodic(const Duration(seconds: 1), _updateDataSource);
-    db.setConn();
-    connection = db.conn;
+
+    setUpConn();
+  }
+
+  void setUpConn() async {
+    setState(() {
+      _connState = ConnectionState.LOADING;
+    });
+    MySqlConnection _connection = await db.getConn();
+    setState(() {
+      connection = _connection;
+      _connState = ConnectionState.FINISHED;
+    });
     _getParam();
   }
 
   @override
   void dispose() async {
     timer.cancel();
-    connection.then((conn) => conn.close());
+    connection.close();
     super.dispose();
   }
 
@@ -149,31 +163,35 @@ class _StationGraphState extends State<StationGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(20.0),
-      height: 626.0,
-      color: Colors.black45,
-      child: SfCartesianChart(
-          backgroundColor: secondaryColor,
-          borderColor: primaryColor,
-          borderWidth: 2.0,
-          enableAxisAnimation: true,
-          primaryXAxis: NumericAxis(isVisible: false),
-          primaryYAxis: NumericAxis(
-              labelFormat: '{value}${widget.unit}',
-              anchorRangeToVisiblePoints: false,
-              labelStyle: const TextStyle(color: Colors.black)),
-          series: <LineSeries<ChartData, int>>[
-            LineSeries<ChartData, int>(
-                onRendererCreated: (ChartSeriesController controller) {
-                  _chartSeriesController = controller;
-                },
-                dataSource: chartData,
-                xValueMapper: (ChartData data, _) => data.x,
-                yValueMapper: (ChartData data, _) => data.y,
-                color: Colors.red),
-          ]),
-    );
+    return (_connState == ConnectionState.FINISHED)
+        ? Container(
+            margin: const EdgeInsets.all(20.0),
+            height: 626.0,
+            color: Colors.black45,
+            child: SfCartesianChart(
+                backgroundColor: secondaryColor,
+                borderColor: primaryColor,
+                borderWidth: 2.0,
+                enableAxisAnimation: true,
+                primaryXAxis: NumericAxis(isVisible: false),
+                primaryYAxis: NumericAxis(
+                    labelFormat: '{value}${widget.unit}',
+                    anchorRangeToVisiblePoints: false,
+                    labelStyle: const TextStyle(color: Colors.black)),
+                series: <LineSeries<ChartData, int>>[
+                  LineSeries<ChartData, int>(
+                      onRendererCreated: (ChartSeriesController controller) {
+                        _chartSeriesController = controller;
+                      },
+                      dataSource: chartData,
+                      xValueMapper: (ChartData data, _) => data.x,
+                      yValueMapper: (ChartData data, _) => data.y,
+                      color: Colors.red),
+                ]),
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
   }
 }
 

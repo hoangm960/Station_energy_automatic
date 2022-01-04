@@ -1,8 +1,12 @@
+// ignore_for_file: constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';
+
+enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
 
 class SignUpScreen extends StatefulWidget {
   final VoidCallback onReturn;
@@ -15,18 +19,18 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   bool hidePassword = true;
   var db = Mysql();
-  late Future<MySqlConnection> connection;
+  late MySqlConnection connection;
   String type = 'Employee';
   String username = '';
   String password = '';
   String displayName = '';
   late List<TextBox> userBoxes;
+  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
 
   @override
   void initState() {
     super.initState();
-    db.setConn();
-    connection = db.conn;
+    setUpConn();
     userBoxes = [
       TextBox(
         hintText: 'Username',
@@ -42,6 +46,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
         text: displayName,
       ),
     ];
+  }
+
+  @override
+  void dispose() {
+    connection.close();
+    super.dispose();
+  }
+
+  void setUpConn() async {
+    setState(() {
+      _connState = ConnectionState.LOADING;
+    });
+    MySqlConnection _connection = await db.getConn();
+    setState(() {
+      connection = _connection;
+      _connState = ConnectionState.FINISHED;
+    });
   }
 
   void uploadData() {
@@ -72,12 +93,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           break;
         }
     }
-    connection.then((conn) {
-      String sql = '''INSERT INTO user (name, displayName, password, typeId) 
+    String sql = '''INSERT INTO user (name, displayName, password, typeId) 
           VALUES ("$username", "$displayName", "$encryptedPw", $typeId)''';
-      conn.query(sql).then((_) {
-        conn.close();
-      });
+    connection.query(sql).then((_) {
+      connection.close();
     });
     AlertDialog alert = AlertDialog(
       title: const Text("Sign up complete"),
@@ -102,98 +121,103 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        const SizedBox(
-          height: 60,
-        ),
-        Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: const [
-                BoxShadow(
-                    color: Color.fromRGBO(225, 95, 27, .3),
-                    blurRadius: 20,
-                    offset: Offset(0, 10))
-              ]),
-          child: Column(
+    return (_connState == ConnectionState.FINISHED)
+        ? Column(
             children: <Widget>[
+              const SizedBox(
+                height: 60,
+              ),
               Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      border:
-                          Border(bottom: BorderSide(color: Colors.grey[200]!))),
-                  child: Column(
-                    children: [
-                      ...userBoxes,
-                      Row(children: [
-                        const Text(
-                          'Type:',
-                          style: TextStyle(color: Colors.grey, fontSize: 15.0),
-                        ),
-                        const SizedBox(
-                          width: 50.0,
-                        ),
-                        DropdownButton<String>(
-                          value: type,
-                          icon: const Icon(
-                            Icons.arrow_downward,
-                            color: Colors.black,
-                          ),
-                          elevation: 16,
-                          underline: Container(
-                            height: 2,
-                            color: Colors.black,
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              type = newValue!;
-                              username = userBoxes[0].controller.text;
-                              password = userBoxes[1].controller.text;
-                              displayName = userBoxes[2].controller.text;
-                            });
-                          },
-                          items: <String>[
-                            'General Manager',
-                            'Station Manager',
-                            'Repairer',
-                            'Employee'
-                          ].map((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                          style: const TextStyle(color: Colors.black),
-                          dropdownColor: Colors.white,
-                        ),
-                      ])
-                    ],
-                  ))
-            ],
-          ),
-        ),
-        const SizedBox(
-          height: 40,
-        ),
-        InkWell(
-          onTap: () => uploadData(),
-          child: Container(
-              height: 50,
-              margin: const EdgeInsets.symmetric(horizontal: 50),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(50),
-                  color: Colors.orange[900]),
-              child: const Center(
-                child: Text(
-                  "Sign Up",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: const [
+                      BoxShadow(
+                          color: Color.fromRGBO(225, 95, 27, .3),
+                          blurRadius: 20,
+                          offset: Offset(0, 10))
+                    ]),
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(color: Colors.grey[200]!))),
+                        child: Column(
+                          children: [
+                            ...userBoxes,
+                            Row(children: [
+                              const Text(
+                                'Type:',
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 15.0),
+                              ),
+                              const SizedBox(
+                                width: 50.0,
+                              ),
+                              DropdownButton<String>(
+                                value: type,
+                                icon: const Icon(
+                                  Icons.arrow_downward,
+                                  color: Colors.black,
+                                ),
+                                elevation: 16,
+                                underline: Container(
+                                  height: 2,
+                                  color: Colors.black,
+                                ),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    type = newValue!;
+                                    username = userBoxes[0].controller.text;
+                                    password = userBoxes[1].controller.text;
+                                    displayName = userBoxes[2].controller.text;
+                                  });
+                                },
+                                items: <String>[
+                                  'General Manager',
+                                  'Station Manager',
+                                  'Repairer',
+                                  'Employee'
+                                ].map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                style: const TextStyle(color: Colors.black),
+                                dropdownColor: Colors.white,
+                              ),
+                            ])
+                          ],
+                        ))
+                  ],
                 ),
-              )),
-        ),
-      ],
-    );
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              InkWell(
+                onTap: () => uploadData(),
+                child: Container(
+                    height: 50,
+                    margin: const EdgeInsets.symmetric(horizontal: 50),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: Colors.orange[900]),
+                    child: const Center(
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                      ),
+                    )),
+              ),
+            ],
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
   }
 }

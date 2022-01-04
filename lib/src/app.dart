@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
                     return StationScreen(stationArgs['station']);
                   case LiveStreamingPlayer.routeName:
                     Map playerArgs = routeSettings.arguments as Map;
-                    return LiveStreamingPlayer(playerArgs['url']);
+                    return LiveStreamingPlayer(index: playerArgs['index'],);
                   case LoginPage.routeName:
                     return const LoginPage();
                   case HomePage.routeName:

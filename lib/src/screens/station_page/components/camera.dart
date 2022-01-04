@@ -1,11 +1,22 @@
+// ignore_for_file: constant_identifier_names
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
+import 'package:ocean_station_auto/src/constant.dart';
+import 'package:ocean_station_auto/src/models/station.dart';
+import 'package:ocean_station_auto/src/models/station_list.dart';
+import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'dart:async';
 
 import 'package:webview_windows/webview_windows.dart';
 
+enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+
 class LiveStreamingPlayer extends StatefulWidget {
-  final String url;
-  const LiveStreamingPlayer(this.url, {Key? key}) : super(key: key);
+  final int index;
+  const LiveStreamingPlayer({Key? key, required this.index}) : super(key: key);
 
   static const routeName = '/camera';
 
@@ -14,13 +25,72 @@ class LiveStreamingPlayer extends StatefulWidget {
 }
 
 class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
+  var db = Mysql();
+  late MySqlConnection connection;
   final _controller = WebviewController();
   final _textController = TextEditingController();
+  String _url = '';
+  late Station _station;
+  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
 
   @override
   void initState() {
     super.initState();
+    setUpConn();
+  }
+
+  @override
+  void dispose() {
+    connection.close();
+    super.dispose();
+  }
+
+  void setUpConn() async {
+    setState(() {
+      _connState = ConnectionState.LOADING;
+    });
+    MySqlConnection _connection = await db.getConn();
+    setState(() {
+      connection = _connection;
+      _connState = ConnectionState.FINISHED;
+    });
+    _station = await _getStation();
+    _getCameraUrl();
     initPlatformState();
+  }
+
+  Future<Station> _getStation() async {
+    await StationList().init();
+    Paths paths = Paths();
+    final file = await paths.stationsFile;
+
+    final contents = await file.readAsString();
+    final List jsonStations = json.decode(contents);
+    return List.generate(jsonStations.length,
+        (index) => Station.fromJson(jsonStations[index]))[widget.index];
+  }
+
+  void _getCameraUrl() async {
+    String sql = await _getCameraUrlCmd();
+    if (sql.isNotEmpty) {
+      var results = await connection.query(sql);
+      for (var row in results) {
+        setState(() {
+          _url = row[0];
+        });
+      }
+    }
+  }
+
+  Future<String> _getCameraUrlCmd() async {
+    String cmd = '';
+    String sql =
+        'SELECT sqlFunction FROM permission WHERE name = "Check camera"';
+    var results = await connection.query(sql);
+    for (var row in results) {
+      cmd = row[0].toString().replaceFirst('{}', '${_station.id}');
+    }
+    return cmd;
   }
 
   Future<void> initPlatformState() async {
@@ -31,7 +101,7 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
 
     await _controller.setBackgroundColor(Colors.transparent);
     await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
-    await _controller.loadUrl(widget.url);
+    await _controller.loadUrl(_url);
 
     if (!mounted) return;
 
@@ -48,73 +118,76 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
         ),
       );
     } else {
-      return Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            Card(
-              elevation: 0,
-              child: TextField(
-                decoration: InputDecoration(
-                    hintText: 'URL',
-                    contentPadding: const EdgeInsets.all(10.0),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.refresh),
-                      onPressed: () {
-                        _controller.reload();
-                      },
-                    )),
-                textAlignVertical: TextAlignVertical.center,
-                controller: _textController,
-                onSubmitted: (val) {
-                  _controller.loadUrl(val);
-                },
-              ),
-            ),
-            Expanded(
-                child: Card(
-                    color: Colors.transparent,
+      return (_connState == ConnectionState.FINISHED)
+          ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Card(
                     elevation: 0,
-                    clipBehavior: Clip.antiAliasWithSaveLayer,
-                    child: Stack(
-                      children: [
-                        Webview(
-                          _controller,
-                          permissionRequested: _onPermissionRequested,
-                        ),
-                        StreamBuilder<LoadingState>(
-                            stream: _controller.loadingState,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData &&
-                                  snapshot.data == LoadingState.loading) {
-                                return const LinearProgressIndicator();
-                              } else {
-                                return const SizedBox();
-                              }
-                            }),
-                      ],
-                    ))),
-          ],
-        ),
-      );
+                    child: TextField(
+                      decoration: InputDecoration(
+                          hintText: 'URL',
+                          contentPadding: const EdgeInsets.all(10.0),
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.refresh),
+                            onPressed: () {
+                              _controller.reload();
+                            },
+                          )),
+                      textAlignVertical: TextAlignVertical.center,
+                      controller: _textController,
+                      onSubmitted: (val) {
+                        _controller.loadUrl(val);
+                      },
+                    ),
+                  ),
+                  Expanded(
+                      child: Card(
+                          color: Colors.transparent,
+                          elevation: 0,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Stack(
+                            children: [
+                              Webview(
+                                _controller,
+                                permissionRequested: _onPermissionRequested,
+                              ),
+                              StreamBuilder<LoadingState>(
+                                  stream: _controller.loadingState,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData &&
+                                        snapshot.data == LoadingState.loading) {
+                                      return const LinearProgressIndicator();
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                  }),
+                            ],
+                          ))),
+                ],
+              ),
+            )
+          : const Center(
+              child: CircularProgressIndicator(),
+            );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: StreamBuilder<String>(
-          stream: _controller.title,
-          builder: (context, snapshot) {
-            return Text(snapshot.hasData
-                ? snapshot.data!
-                : 'WebView (Windows) Example');
-          },
-        )),
-        body: Center(
-          child: compositeView(),
-        ),
+      appBar: AppBar(
+          title: StreamBuilder<String>(
+        stream: _controller.title,
+        builder: (context, snapshot) {
+          return Text(
+              snapshot.hasData ? snapshot.data! : 'WebView (Windows) Example');
+        },
+      )),
+      body: Center(
+        child: compositeView(),
+      ),
     );
   }
 

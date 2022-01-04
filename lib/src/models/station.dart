@@ -1,4 +1,3 @@
-
 import 'package:json_annotation/json_annotation.dart';
 
 import 'location.dart';
@@ -6,6 +5,7 @@ part 'station.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class Station {
+  final int id;
   final String name;
   Location location;
   final bool state;
@@ -19,6 +19,7 @@ class Station {
   final double powerFactor;
 
   Station({
+    required this.id,
     required this.name,
     required this.location,
     required this.power,
@@ -32,7 +33,8 @@ class Station {
     this.powerFactor = 0.0,
   });
 
-  factory Station.fromJson(Map<String, dynamic> json) => _$StationFromJson(json);
+  factory Station.fromJson(Map<String, dynamic> json) =>
+      _$StationFromJson(json);
 
   Map<String, dynamic> toJson() => _$StationToJson(this);
 }

@@ -19,8 +19,8 @@ class User {
 
   Future<int> getTypeId() async {
     int id = 0;
-    db.setConn();
-    connection = await db.conn;
+
+    connection = await db.getConn();
     String sql = 'SELECT typeId FROM type WHERE name = $type';
     var results = await connection.query(sql);
     for (var row in results) {

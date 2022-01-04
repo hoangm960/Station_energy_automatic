@@ -7,6 +7,7 @@ part of 'station.dart';
 // **************************************************************************
 
 Station _$StationFromJson(Map<String, dynamic> json) => Station(
+      id: json['id'] as int,
       name: json['name'] as String,
       location: Location.fromJson(json['location'] as Map<String, dynamic>),
       power: (json['power'] as num).toDouble(),
@@ -21,6 +22,7 @@ Station _$StationFromJson(Map<String, dynamic> json) => Station(
     );
 
 Map<String, dynamic> _$StationToJson(Station instance) => <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'location': instance.location.toJson(),
       'state': instance.state,

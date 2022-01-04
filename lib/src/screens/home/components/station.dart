@@ -30,7 +30,7 @@ class _StationViewState extends State<StationView> {
     double windSpeed =
         await WeatherInfo(widget.station.location.x, widget.station.location.y)
             .getWindSpeed();
-    if (windSpeed > 3.0 && _alerted == false) {
+    if (windSpeed > 10.0 && _alerted == false) {
       _alerted = true;
       windAlert();
     }

@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/screens/home/components/add_station.dart';
 import 'package:ocean_station_auto/src/screens/home/components/station_list.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,8 +16,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   StationListView stationList = const StationListView();
-
-  
 
   void refresh() {
     setState(() {

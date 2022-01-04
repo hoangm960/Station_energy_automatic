@@ -18,8 +18,7 @@ class StationList {
   StationList();
 
   Future init() async {
-    db.setConn();
-    connection = await db.conn;
+    connection = await db.getConn();
     _user = await getUser();
     stationList = await getStationList();
     List<Map> stationsJson = List.generate(
@@ -44,25 +43,24 @@ class StationList {
   }
 
   Future getStationList() async {
-    connection = await db.conn;
-
     List<Station> stations = [];
     String sql = await getCmd();
     if (sql.isNotEmpty) {
       var results = await connection.query(sql);
       for (var row in results) {
         stations.add(Station(
-            name: row[0],
-            location: Location(x: row[1], y: row[2]),
-            voltDC: row[3],
-            currentDC: row[4],
-            voltAC: row[5],
-            currentAC: row[6],
-            power: row[7],
-            energy: row[8],
-            frequency: row[9],
-            powerFactor: row[10],
-            state: (row[11] == 1) ? true : false));
+            id: row[0],
+            name: row[1],
+            location: Location(x: row[2], y: row[3]),
+            voltDC: row[4],
+            currentDC: row[5],
+            voltAC: row[6],
+            currentAC: row[7],
+            power: row[8],
+            energy: row[9],
+            frequency: row[10],
+            powerFactor: row[11],
+            state: (row[12] == 1) ? true : false));
       }
     }
     return stations;

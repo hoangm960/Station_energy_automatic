@@ -1,14 +1,11 @@
-import 'dart:async';
+// ignore_for_file: file_names, constant_identifier_names
+
 import 'package:mysql1/mysql1.dart';
 
-class Mysql {
-  var conn;
 
-  Mysql();
-  void setConn() async {
-    
-    // ignore: unnecessary_this
-    this.conn =  MySqlConnection.connect(ConnectionSettings(
+class Mysql {
+  Future<MySqlConnection> getConn() async {
+    return await MySqlConnection.connect(ConnectionSettings(
         host: 'khktdb.ddns.net',
         port: 3306,
         user: 'root',
