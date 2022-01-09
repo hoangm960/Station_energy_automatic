@@ -36,12 +36,6 @@ class _StationInfoState extends State<StationInfo> {
     _station = widget.station;
   }
 
-  @override
-  void dispose() {
-    connection.close();
-    super.dispose();
-  }
-
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.LOADING;
@@ -93,119 +87,123 @@ class _StationInfoState extends State<StationInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: getScreenSize(context).height - 18.0 * 2,
-      padding: const EdgeInsets.all(18.0),
-      child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Location: ${_station.location.x} ${_station.location.y}',
-              style: infoTextStyle,
-            ),
-            Text(
-              'VoltDC: ${_station.voltDC} V',
-              style: infoTextStyle,
-            ),
-            Text(
-              'CurrentDC: ${_station.currentDC} A',
-              style: infoTextStyle,
-            ),
-            Text(
-              'VoltAC: ${_station.voltAC} V',
-              style: infoTextStyle,
-            ),
-            Text(
-              'CurrentAC: ${_station.currentAC} A',
-              style: infoTextStyle,
-            ),
-            Text(
-              'Power: ${_station.power} W',
-              style: infoTextStyle,
-            ),
-            Text(
-              'Energy: ${_station.energy} kW/h',
-              style: infoTextStyle,
-            ),
-            Text(
-              'Frequency: ${_station.frequency} Hz',
-              style: infoTextStyle,
-            ),
-            Text(
-              'Power Factor: ${_station.powerFactor}',
-              style: infoTextStyle,
-            ),
-            Center(
-              child: Row(
+    return (_connState == ConnectionState.FINISHED)
+        ? Container(
+            height: getScreenSize(context).height - 18.0 * 2,
+            padding: const EdgeInsets.all(18.0),
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    'State: ',
+                  Text(
+                    'Location: ${_station.location.x} ${_station.location.y}',
                     style: infoTextStyle,
                   ),
-                  _station.state
-                      ? Row(
-                          children: const [
-                            Text(
-                              'good',
-                              style: TextStyle(color: Colors.green),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Icon(
-                              Icons.check_box,
-                              color: Colors.green,
-                            ),
-                          ],
-                        )
-                      : Row(
-                          children: const [
-                            Text(
-                              'bad',
-                              style: TextStyle(color: Colors.red),
-                            ),
-                            SizedBox(
-                              width: 5.0,
-                            ),
-                            Icon(
-                              Icons.warning,
-                              color: Colors.red,
-                            ),
-                          ],
+                  Text(
+                    'VoltDC: ${_station.voltDC.toStringAsFixed(2)} V',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'CurrentDC: ${_station.currentDC.toStringAsFixed(2)} A',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'VoltAC: ${_station.voltAC.toStringAsFixed(2)} V',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'CurrentAC: ${_station.currentAC.toStringAsFixed(2)} A',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'Power: ${_station.power.toStringAsFixed(2)} W',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'Energy: ${_station.energy.toStringAsFixed(2)} kW/h',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'Frequency: ${_station.frequency.toStringAsFixed(2)} Hz',
+                    style: infoTextStyle,
+                  ),
+                  Text(
+                    'Power Factor: ${_station.powerFactor.toStringAsFixed(2)}',
+                    style: infoTextStyle,
+                  ),
+                  Center(
+                    child: Row(
+                      children: [
+                        const Text(
+                          'State: ',
+                          style: infoTextStyle,
                         ),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {},
-              child: Row(
-                children: const [
-                  Text(
-                    'Employee List',
-                    style: infoTextStyle,
+                        _station.state
+                            ? Row(
+                                children: const [
+                                  Text(
+                                    'good',
+                                    style: TextStyle(color: Colors.green),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Icon(
+                                    Icons.check_box,
+                                    color: Colors.green,
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                children: const [
+                                  Text(
+                                    'bad',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Icon(
+                                    Icons.warning,
+                                    color: Colors.red,
+                                  ),
+                                ],
+                              ),
+                      ],
+                    ),
                   ),
-                  Icon(Icons.arrow_forward_ios_rounded),
-                ],
-              ),
-            ),
-            InkWell(
-              onTap: () {
-                Navigator.restorablePushNamed(
-                    context, LiveStreamingPlayer.routeName,
-                    arguments: <String, int>{'index': widget.index});
-              },
-              child: Row(
-                children: const [
-                  Text(
-                    'Security Camera',
-                    style: infoTextStyle,
+                  InkWell(
+                    onTap: () {},
+                    child: Row(
+                      children: const [
+                        Text(
+                          'Employee List',
+                          style: infoTextStyle,
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded),
+                      ],
+                    ),
                   ),
-                  Icon(Icons.arrow_forward_ios_rounded),
-                ],
-              ),
-            )
-          ]),
-    );
+                  InkWell(
+                    onTap: () {
+                      Navigator.restorablePushNamed(
+                          context, LiveStreamingPlayer.routeName,
+                          arguments: <String, int>{'index': widget.index});
+                    },
+                    child: Row(
+                      children: const [
+                        Text(
+                          'Security Camera',
+                          style: infoTextStyle,
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded),
+                      ],
+                    ),
+                  )
+                ]),
+          )
+        : const Center(
+            child: CircularProgressIndicator(),
+          );
   }
 }

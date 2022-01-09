@@ -28,12 +28,6 @@ class _TextBoxState extends State<TextBox> {
   }
 
   @override
-  void dispose() {
-    widget.controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),

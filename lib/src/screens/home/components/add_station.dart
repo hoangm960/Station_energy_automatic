@@ -37,12 +37,6 @@ class _AddStationState extends State<AddStation> {
     setUpConn();
   }
 
-  @override
-  void dispose() {
-    connection.close();
-    super.dispose();
-  }
-
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.LOADING;

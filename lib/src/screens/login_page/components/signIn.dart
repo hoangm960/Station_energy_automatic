@@ -42,12 +42,6 @@ class _SignInScreenState extends State<SignInScreen> {
     setUpConn();
   }
 
-  @override
-  void dispose() {
-    connection.close();
-    super.dispose();
-  }
-
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.LOADING;

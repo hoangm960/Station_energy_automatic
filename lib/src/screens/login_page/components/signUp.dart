@@ -48,12 +48,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
     ];
   }
 
-  @override
-  void dispose() {
-    connection.close();
-    super.dispose();
-  }
-
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.LOADING;

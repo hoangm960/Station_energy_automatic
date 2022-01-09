@@ -136,9 +136,8 @@ class _StationGraphState extends State<StationGraph> {
   }
 
   @override
-  void dispose() async {
+  void dispose() {
     timer.cancel();
-    connection.close();
     super.dispose();
   }
 

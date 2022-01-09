@@ -39,12 +39,6 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
     setUpConn();
   }
 
-  @override
-  void dispose() {
-    connection.close();
-    super.dispose();
-  }
-
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.LOADING;
