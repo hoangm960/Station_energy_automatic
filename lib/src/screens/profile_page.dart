@@ -42,11 +42,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(title: const Text('Profile')),
       body: Center(
         child: Container(
-          padding: const EdgeInsetsDirectional.all(60.0),
           width: getScreenSize(context).width,
           height: getScreenSize(context).height / 2,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const CircleAvatar(
@@ -55,6 +54,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.person,
                     size: 40.0,
                   )),
+              const SizedBox(
+                height: 20.0,
+              ),
+              Text("ID:    ${_user?.id ?? ''}"),
               const SizedBox(
                 height: 20.0,
               ),

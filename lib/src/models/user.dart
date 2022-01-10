@@ -5,13 +5,14 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
+  final int id;
   final String username;
   final String displayName;
   final String type;
   var db = Mysql();
   late MySqlConnection connection;
 
-  User({required this.username, required this.displayName, required this.type});
+  User({required this.id, required this.username, required this.displayName, required this.type});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

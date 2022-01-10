@@ -69,7 +69,7 @@ class _SignInScreenState extends State<SignInScreen> {
       if (value.isNotEmpty) {
         for (var row in value) {
           Map userData =
-              User(username: row[0], displayName: row[1], type: row[2])
+              User(id: id, username: row[0], displayName: row[1], type: row[2])
                   .toJson();
           writeData(userData);
         }
