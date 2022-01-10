@@ -51,15 +51,15 @@ class StationList {
         stations.add(Station(
             id: row[0],
             name: row[1],
-            location: Location(x: row[2], y: row[3]),
-            voltDC: row[4],
-            currentDC: row[5],
-            voltAC: row[6],
-            currentAC: row[7],
-            power: row[8],
-            energy: row[9],
-            frequency: row[10],
-            powerFactor: row[11],
+            location: Location(x: row[2] ?? 0.0, y: row[3] ?? 0.0),
+            voltDC: row[4] ?? 0.0,
+            currentDC: row[5] ?? 0.0,
+            voltAC: row[6] ?? 0.0,
+            currentAC: row[7] ?? 0.0,
+            power: row[8] ?? 0.0,
+            energy: row[9] ?? 0.0,
+            frequency: row[10] ?? 0.0,
+            powerFactor: row[11] ?? 0.0,
             state: (row[12] == 1) ? true : false));
       }
     }
