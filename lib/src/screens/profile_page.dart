@@ -41,7 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: getScreenSize(context).width,
           height: getScreenSize(context).height / 2,
           child: Column(

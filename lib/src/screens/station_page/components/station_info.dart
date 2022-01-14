@@ -7,6 +7,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/location.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
 enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
@@ -172,6 +173,18 @@ class _StationInfoState extends State<StationInfo> {
                       ],
                     ),
                   ),
+                  if (!_station.state)
+                    InkWell(
+                      onTap: () => Navigator.restorablePushNamed(
+                          context, RepairerPage.routeName, arguments: <String, int>{'id': _station.id}),
+                      child: Row(children: const [
+                        Text(
+                          'Send repairer',
+                          style: infoTextStyle,
+                        ),
+                        Icon(Icons.arrow_forward_ios_rounded)
+                      ]),
+                    ),
                   InkWell(
                     onTap: () {},
                     child: Row(
