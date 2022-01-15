@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -8,7 +6,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class StationGraphList extends StatelessWidget {
   const StationGraphList({
@@ -101,7 +99,7 @@ class _StationGraphState extends State<StationGraph> {
   double value = 0.0;
   var db = Mysql();
   late MySqlConnection connection;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   void _getParam() async {
     String sql =
@@ -125,12 +123,12 @@ class _StationGraphState extends State<StationGraph> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
-      _connState = ConnectionState.FINISHED;
+      _connState = ConnectionState.finished;
     });
     _getParam();
   }
@@ -162,7 +160,7 @@ class _StationGraphState extends State<StationGraph> {
 
   @override
   Widget build(BuildContext context) {
-    return (_connState == ConnectionState.FINISHED)
+    return (_connState == ConnectionState.finished)
         ? Container(
             margin: const EdgeInsets.all(20.0),
             height: 626.0,

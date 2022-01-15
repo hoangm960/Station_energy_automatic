@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
@@ -7,7 +5,7 @@ import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'text_box.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class AddStation extends StatefulWidget {
   final Function() notifyParrent;
@@ -29,7 +27,7 @@ class _AddStationState extends State<AddStation> {
   var db = Mysql();
   String cmd = '';
   late MySqlConnection connection;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   @override
   void initState() {
@@ -39,12 +37,12 @@ class _AddStationState extends State<AddStation> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
-      _connState = ConnectionState.FINISHED;
+      _connState = ConnectionState.finished;
     });
   }
 
@@ -75,7 +73,7 @@ class _AddStationState extends State<AddStation> {
 
   @override
   Widget build(BuildContext context) {
-    return (_connState == ConnectionState.FINISHED)
+    return (_connState == ConnectionState.finished)
         ? AlertDialog(
             title: const Text('Station'),
             insetPadding: EdgeInsets.all(getScreenSize(context).height / 5),

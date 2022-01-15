@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -8,7 +6,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class RepairerPage extends StatefulWidget {
   final int stationId;
@@ -24,7 +22,7 @@ class _RepairerPageState extends State<RepairerPage> {
   String dropdownValue = 'One';
   var db = Mysql();
   late MySqlConnection connection;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
   List<User> repairerList = [];
 
   @override
@@ -35,7 +33,7 @@ class _RepairerPageState extends State<RepairerPage> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
@@ -71,7 +69,7 @@ class _RepairerPageState extends State<RepairerPage> {
               type: 'Repairer'));
           setState(() {
             repairerList = _repairerList;
-            _connState = ConnectionState.FINISHED;
+            _connState = ConnectionState.finished;
           });
         }
       }
@@ -89,7 +87,7 @@ class _RepairerPageState extends State<RepairerPage> {
       appBar: AppBar(
         title: const Text('Choose Repairer'),
       ),
-      body: (_connState == ConnectionState.FINISHED)
+      body: (_connState == ConnectionState.finished)
           ? ListView.builder(
               itemCount: repairerList.length,
               itemBuilder: (BuildContext context, int index) {

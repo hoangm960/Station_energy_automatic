@@ -1,6 +1,3 @@
-// ignore: file_names
-// ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -13,7 +10,7 @@ import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -34,7 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
   var db = Mysql();
   late MySqlConnection connection;
   Color borderColor = Colors.transparent;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   @override
   void initState() {
@@ -44,12 +41,12 @@ class _SignInScreenState extends State<SignInScreen> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
-      _connState = ConnectionState.FINISHED;
+      _connState = ConnectionState.finished;
     });
   }
 
@@ -101,7 +98,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return (_connState == ConnectionState.FINISHED)
+    return (_connState == ConnectionState.finished)
         ? Column(
             children: <Widget>[
               const SizedBox(

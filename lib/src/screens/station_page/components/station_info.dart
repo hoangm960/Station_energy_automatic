@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
@@ -10,7 +8,7 @@ import 'package:ocean_station_auto/src/screens/station_page/components/camera.da
 import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class StationInfo extends StatefulWidget {
   final int index;
@@ -28,7 +26,7 @@ class _StationInfoState extends State<StationInfo> {
   late MySqlConnection connection;
   late Timer timer;
   late Station _station;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   @override
   void initState() {
@@ -39,12 +37,12 @@ class _StationInfoState extends State<StationInfo> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
-      _connState = ConnectionState.FINISHED;
+      _connState = ConnectionState.finished;
     });
     timer = Timer.periodic(const Duration(seconds: 5), _getParam);
   }
@@ -88,7 +86,7 @@ class _StationInfoState extends State<StationInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return (_connState == ConnectionState.FINISHED)
+    return (_connState == ConnectionState.finished)
         ? Container(
             height: getScreenSize(context).height - 18.0 * 2,
             padding: const EdgeInsets.all(18.0),
@@ -176,7 +174,8 @@ class _StationInfoState extends State<StationInfo> {
                   if (!_station.state)
                     InkWell(
                       onTap: () => Navigator.restorablePushNamed(
-                          context, RepairerPage.routeName, arguments: <String, int>{'id': _station.id}),
+                          context, RepairerPage.routeName,
+                          arguments: <String, int>{'id': _station.id}),
                       child: Row(children: const [
                         Text(
                           'Send repairer',

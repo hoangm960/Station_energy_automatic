@@ -1,5 +1,3 @@
-// ignore_for_file: constant_identifier_names
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -12,7 +10,7 @@ import 'dart:async';
 
 import 'package:webview_windows/webview_windows.dart';
 
-enum ConnectionState { NOT_DOWNLOADED, LOADING, FINISHED }
+enum ConnectionState { notDownloaded, loading, finished }
 
 class LiveStreamingPlayer extends StatefulWidget {
   final int index;
@@ -31,7 +29,7 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
   final _textController = TextEditingController();
   String _url = '';
   late Station _station;
-  ConnectionState _connState = ConnectionState.NOT_DOWNLOADED;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   @override
   void initState() {
@@ -41,12 +39,12 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
 
   void setUpConn() async {
     setState(() {
-      _connState = ConnectionState.LOADING;
+      _connState = ConnectionState.loading;
     });
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
-      _connState = ConnectionState.FINISHED;
+      _connState = ConnectionState.finished;
     });
     _station = await _getStation();
     _getCameraUrl();
@@ -112,7 +110,7 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
         ),
       );
     } else {
-      return (_connState == ConnectionState.FINISHED)
+      return (_connState == ConnectionState.finished)
           ? Padding(
               padding: const EdgeInsets.all(20),
               child: Column(

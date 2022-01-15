@@ -70,9 +70,10 @@ class StationList {
     String cmd = '';
     String sql = '''SELECT sqlFunction FROM permission 
         WHERE permissionId IN
-          (SELECT permissionId FROM type_permission WHERE typeId = 1)
+          (SELECT permissionId FROM type_permission WHERE typeId = ?)
         AND name = "Get all stations data"''';
-    var results = await connection.query(sql);
+    int typeId = await _user.getTypeId();
+    var results = await connection.query(sql, [typeId]);
     for (var row in results) {
       cmd = row[0];
     }
