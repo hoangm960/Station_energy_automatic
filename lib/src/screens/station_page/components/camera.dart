@@ -1,10 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'dart:async';
 
@@ -46,21 +44,12 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
       connection = _connection;
       _connState = ConnectionState.finished;
     });
-    _station = await _getStation();
+    _station = await getStation(widget.index);
     _getCameraUrl();
     initPlatformState();
   }
 
-  Future<Station> _getStation() async {
-    await StationList().init();
-    Paths paths = Paths();
-    final file = await paths.stationsFile;
-
-    final contents = await file.readAsString();
-    final List jsonStations = json.decode(contents);
-    return List.generate(jsonStations.length,
-        (index) => Station.fromJson(jsonStations[index]))[widget.index];
-  }
+  
 
   void _getCameraUrl() async {
     String sql = await _getCameraUrlCmd();

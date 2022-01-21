@@ -57,21 +57,20 @@ class _SignInScreenState extends State<SignInScreen> {
     return file.writeAsString(json.encode(data));
   }
 
-  void saveUser(id) {
-    String sql = '''SELECT u.name, displayName, t.name 
+  void saveUser(id) async {
+    String sql = '''SELECT u.name, displayName, t.name, t.typeId 
             FROM user u
             LEFT JOIN type t USING (typeId)
             WHERE userId = $id''';
-    connection.query(sql).then((value) {
-      if (value.isNotEmpty) {
-        for (var row in value) {
-          Map userData =
-              User(id: id, username: row[0], displayName: row[1], type: row[2])
-                  .toJson();
-          writeData(userData);
-        }
+    var results = await connection.query(sql);
+    if (results.isNotEmpty) {
+      for (var row in results) {
+        Map userData =
+            User(id: id, username: row[0], displayName: row[1], type: row[2], typeId: row[3])
+                .toJson();
+        writeData(userData);
       }
-    });
+    }
     connection.close();
   }
 

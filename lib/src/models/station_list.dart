@@ -33,15 +33,6 @@ class StationList {
     return file.writeAsString(json.encode(data));
   }
 
-  Future getUser() async {
-    Paths paths = Paths();
-    final file = await paths.userFile;
-
-    final contents = await file.readAsString();
-    final Map<String, dynamic> jsonUser = json.decode(contents);
-    return User.fromJson(jsonUser);
-  }
-
   Future getStationList() async {
     List<Station> stations = [];
     String sql = await getCmd();
@@ -72,8 +63,7 @@ class StationList {
         WHERE permissionId IN
           (SELECT permissionId FROM type_permission WHERE typeId = ?)
         AND name = "Get all stations data"''';
-    int typeId = await _user.getTypeId();
-    var results = await connection.query(sql, [typeId]);
+    var results = await connection.query(sql, [_user.typeId]);
     for (var row in results) {
       cmd = row[0];
     }

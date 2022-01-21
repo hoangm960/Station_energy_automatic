@@ -66,7 +66,8 @@ class _RepairerPageState extends State<RepairerPage> {
               id: row[0],
               username: row[1],
               displayName: row[2],
-              type: 'Repairer'));
+              type: 'Repairer',
+              typeId: 3));
           setState(() {
             repairerList = _repairerList;
             _connState = ConnectionState.finished;
