@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/models/station_list.dart';
+import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
+import 'package:ocean_station_auto/src/settings/settings_view.dart';
 
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
@@ -49,6 +51,24 @@ class _StationScreenState extends State<StationScreen> {
         ? Scaffold(
             appBar: AppBar(
               title: Text(_station!.name),
+              actions: [
+                IconButton(
+                    onPressed: () {
+                      Navigator.restorablePushNamed(
+                          context, ProfileScreen.routeName);
+                    },
+                    icon: const Icon(Icons.person)),
+                const SizedBox(
+                  width: 16.0,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.settings),
+                  onPressed: () {
+                    Navigator.restorablePushNamed(
+                        context, SettingsView.routeName);
+                  },
+                ),
+              ],
             ),
             body: SafeArea(
                 child: SingleChildScrollView(

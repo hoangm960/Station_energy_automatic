@@ -46,9 +46,10 @@ class _RepairerPageState extends State<RepairerPage> {
     String cmd = '';
     String sql = '''SELECT sqlFunction FROM permission 
         WHERE permissionId IN 
-          (SELECT permissionId FROM type_permission WHERE typeId = 1) 
+          (SELECT permissionId FROM type_permission WHERE typeId = ?) 
         AND name = "$cmdName"''';
-    var results = await connection.query(sql);
+    User _user = await getUser();
+    var results = await connection.query(sql, [_user.typeId]);
     for (var row in results) {
       cmd = row[0].toString().replaceAll('{}', '?');
     }

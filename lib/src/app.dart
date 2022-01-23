@@ -6,6 +6,7 @@ import 'package:ocean_station_auto/src/screens/home/home_page.dart';
 import 'package:ocean_station_auto/src/screens/login_page/login_page.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/employee_list.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 
@@ -63,6 +64,9 @@ class MyApp extends StatelessWidget {
                   case RepairerPage.routeName:
                     Map stationArgs = routeSettings.arguments as Map;
                     return RepairerPage(stationId: stationArgs['id'],);
+                  case EmployeeListPage.routeName:
+                    Map stationArgs = routeSettings.arguments as Map;
+                    return EmployeeListPage(stationId: stationArgs['id'],);
                   case LoginPage.routeName:
                     return const LoginPage();
                   case HomePage.routeName:

@@ -5,6 +5,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/location.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
+import 'package:ocean_station_auto/src/screens/station_page/components/employee_list.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 
@@ -185,7 +186,9 @@ class _StationInfoState extends State<StationInfo> {
                       ]),
                     ),
                   InkWell(
-                    onTap: () {},
+                    onTap: () => Navigator.restorablePushNamed(
+                        context, EmployeeListPage.routeName,
+                        arguments: <String, int>{'id': _station.id}),
                     child: Row(
                       children: const [
                         Text(
