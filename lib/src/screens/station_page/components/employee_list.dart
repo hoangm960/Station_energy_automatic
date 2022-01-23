@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
+import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/wind.dart';
 
 enum ConnectionState { notDownloaded, loading, finished }
 
@@ -24,6 +26,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   late MySqlConnection connection;
   ConnectionState _connState = ConnectionState.notDownloaded;
   List<User> employeeList = [];
+  late Timer timer;
 
   @override
   void initState() {
@@ -40,6 +43,13 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
       connection = _connection;
     });
     Future.delayed(const Duration(seconds: 1), () => _getEmployees());
+    setUpCheckWind();
+  }
+
+  void setUpCheckWind() async {
+    Station _station = await getStation(0);
+    timer = Timer.periodic(const Duration(seconds: 20),
+        (Timer timer) => checkWindSpeed(context, _station));
   }
 
   Future<String> _getCmd(cmdName) async {
