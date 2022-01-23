@@ -58,16 +58,21 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   void saveUser(id) async {
-    String sql = '''SELECT u.name, displayName, t.name, t.typeId 
+    String sql = '''SELECT u.name, displayName, t.name, t.typeId, u.stationId
             FROM user u
             LEFT JOIN type t USING (typeId)
             WHERE userId = $id''';
     var results = await connection.query(sql);
     if (results.isNotEmpty) {
       for (var row in results) {
-        Map userData =
-            User(id: id, username: row[0], displayName: row[1], type: row[2], typeId: row[3])
-                .toJson();
+        Map userData = User(
+                id: id,
+                username: row[0],
+                displayName: row[1],
+                type: row[2],
+                typeId: row[3],
+                stationId: row[4])
+            .toJson();
         writeData(userData);
       }
     }
@@ -85,6 +90,10 @@ class _SignInScreenState extends State<SignInScreen> {
             saveUser(row[0]);
             Navigator.pushNamedAndRemoveUntil(
                 context, HomePage.routeName, (_) => false);
+          } else {
+            setState(() {
+              borderColor = Colors.redAccent;
+            });
           }
         }
       } else {

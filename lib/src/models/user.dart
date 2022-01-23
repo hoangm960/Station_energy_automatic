@@ -8,13 +8,15 @@ class User {
   final String displayName;
   final String type;
   final int typeId;
+  final int? stationId;
 
   User(
       {required this.id,
       required this.username,
       required this.displayName,
       required this.type,
-      required this.typeId});
+      required this.typeId,
+      this.stationId});
 
   factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 

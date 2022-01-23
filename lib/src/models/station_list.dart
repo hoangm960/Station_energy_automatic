@@ -37,7 +37,8 @@ class StationList {
     List<Station> stations = [];
     String sql = await getCmd();
     if (sql.isNotEmpty) {
-      var results = await connection.query(sql);
+      print(sql);
+      var results = await connection.query(sql, _user.stationId != null ? [_user.stationId] : null);
       for (var row in results) {
         stations.add(Station(
             id: row[0],
@@ -59,13 +60,18 @@ class StationList {
 
   Future<String> getCmd() async {
     String cmd = '';
-    String sql = '''SELECT sqlFunction FROM permission 
-        WHERE permissionId IN
-          (SELECT permissionId FROM type_permission WHERE typeId = ?)
-        AND name = "Get all stations data"''';
+    String sql = '''SELECT
+        CASE
+          WHEN typeId = 1 THEN 
+            (SELECT sqlFunction FROM permission WHERE name = "Get all stations data")
+          WHEN typeId = 2 THEN
+            (SELECT sqlFunction FROM permission WHERE name = "Get station data")
+        END
+      FROM user
+      WHERE typeId = ?''';
     var results = await connection.query(sql, [_user.typeId]);
     for (var row in results) {
-      cmd = row[0];
+      cmd = row[0].toString().replaceAll('{}', '?');
     }
     return cmd;
   }
