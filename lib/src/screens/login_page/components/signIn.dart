@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
+import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
@@ -32,6 +33,7 @@ class _SignInScreenState extends State<SignInScreen> {
   late MySqlConnection connection;
   Color borderColor = Colors.transparent;
   ConnectionState _connState = ConnectionState.notDownloaded;
+  late User _user;
 
   @override
   void initState() {
@@ -57,7 +59,7 @@ class _SignInScreenState extends State<SignInScreen> {
     return file.writeAsString(json.encode(data));
   }
 
-  void saveUser(id) async {
+  Future saveUser(id) async {
     String sql = '''SELECT u.name, displayName, t.name, t.typeId, u.stationId
             FROM user u
             LEFT JOIN type t USING (typeId)
@@ -65,43 +67,49 @@ class _SignInScreenState extends State<SignInScreen> {
     var results = await connection.query(sql);
     if (results.isNotEmpty) {
       for (var row in results) {
-        Map userData = User(
-                id: id,
-                username: row[0],
-                displayName: row[1],
-                type: row[2],
-                typeId: row[3],
-                stationId: row[4])
-            .toJson();
+        _user = User(
+            id: id,
+            username: row[0],
+            displayName: row[1],
+            type: row[2],
+            typeId: row[3],
+            stationId: row[4]);
+        Map userData = _user.toJson();
         writeData(userData);
       }
     }
     connection.close();
   }
 
-  void checkData() {
+  void checkData() async {
     String username = userBoxes[0].controller.text;
     String pw = getEncrypt(userBoxes[1].controller.text, username);
     String sql = 'SELECT userId, password FROM user WHERE name = "$username"';
-    connection.query(sql).then((value) {
-      if (value.isNotEmpty) {
-        for (var row in value) {
-          if (pw == row[1]) {
-            saveUser(row[0]);
-            Navigator.pushNamedAndRemoveUntil(
-                context, HomePage.routeName, (_) => false);
-          } else {
-            setState(() {
-              borderColor = Colors.redAccent;
-            });
-          }
+    var results = await connection.query(sql);
+    if (results.isNotEmpty) {
+      for (var row in results) {
+        if (pw == row[1]) {
+          await saveUser(row[0]);
+          _user.stationId == null
+              ? Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  HomePage.routeName,
+                  (_) => false,
+                )
+              : Navigator.pushNamedAndRemoveUntil(
+                  context, StationScreen.routeName, (_) => false,
+                  arguments: <String, int>{'station': 0});
+        } else {
+          setState(() {
+            borderColor = Colors.redAccent;
+          });
         }
-      } else {
-        setState(() {
-          borderColor = Colors.redAccent;
-        });
       }
-    });
+    } else {
+      setState(() {
+        borderColor = Colors.redAccent;
+      });
+    }
   }
 
   @override

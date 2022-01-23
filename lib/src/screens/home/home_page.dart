@@ -69,10 +69,12 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: stationList,
-      floatingActionButton: checked ? FloatingActionButton(
-        onPressed: () => addStation(),
-        child: const Icon(Icons.add),
-      ) : null,
+      floatingActionButton: checked
+          ? FloatingActionButton(
+              onPressed: () => addStation(),
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

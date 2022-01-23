@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
+import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 
 import 'components/graph_list.dart';
@@ -32,6 +33,7 @@ class _StationScreenState extends State<StationScreen> {
   }
 
   Future<List<Station>> _getStation() async {
+    await StationList().init();
     Paths paths = Paths();
     final file = await paths.stationsFile;
 
@@ -72,7 +74,7 @@ class _StationScreenState extends State<StationScreen> {
                     ))))
         : Scaffold(
             appBar: AppBar(
-              title: const Text('Station Name'),
+              title: const Text('Loading...'),
             ),
             body: const Center(child: CircularProgressIndicator()));
   }

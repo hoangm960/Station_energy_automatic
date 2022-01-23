@@ -29,7 +29,6 @@ class StationList {
   Future<File> writeData(var data) async {
     Paths paths = Paths();
     final file = await paths.stationsFile;
-
     return file.writeAsString(json.encode(data));
   }
 
@@ -37,8 +36,8 @@ class StationList {
     List<Station> stations = [];
     String sql = await getCmd();
     if (sql.isNotEmpty) {
-      print(sql);
-      var results = await connection.query(sql, _user.stationId != null ? [_user.stationId] : null);
+      var results = await connection.query(
+          sql, _user.stationId != null ? [_user.stationId] : null);
       for (var row in results) {
         stations.add(Station(
             id: row[0],
