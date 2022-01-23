@@ -6,6 +6,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 import 'package:ocean_station_auto/src/utils/wind.dart';
 
 enum ConnectionState { notDownloaded, loading, finished }
@@ -52,22 +53,8 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         (Timer timer) => checkWindSpeed(context, _station));
   }
 
-  Future<String> _getCmd(cmdName) async {
-    String cmd = '';
-    String sql = '''SELECT sqlFunction FROM permission 
-        WHERE permissionId IN 
-          (SELECT permissionId FROM type_permission WHERE typeId = ?) 
-        AND name = "$cmdName"''';
-    User _user = await getUser();
-    var results = await connection.query(sql, [_user.typeId]);
-    for (var row in results) {
-      cmd = row[0].toString().replaceAll('{}', '?');
-    }
-    return cmd;
-  }
-
   void _getEmployees() async {
-    String sql = await Future.value(_getCmd('Get all employees'));
+    String sql = await Future.value(getCmd(connection, 'Get all employees'));
     List<User> _employeeList = [];
     if (sql.isNotEmpty) {
       var results = await connection.query(sql, [widget.stationId]);
@@ -110,19 +97,19 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                             flex: 1,
                             child: Text(
                               'ID: ${employeeList[index].id}',
-                              style: boldTextStyle,
+                              style: boldTextStyle(),
                             )),
                         Expanded(
                             flex: 2,
                             child: Text(
                               'Username: ${employeeList[index].username}',
-                              style: boldTextStyle,
+                              style: boldTextStyle(),
                             )),
                         Expanded(
                             flex: 3,
                             child: Text(
                               'Display name: ${employeeList[index].displayName}',
-                              style: boldTextStyle,
+                              style: boldTextStyle(),
                             )),
                       ],
                     ),

@@ -26,8 +26,7 @@ void checkWindSpeed(BuildContext context, Station station) async {
   double maxWindspeed = 10.0;
 
   double windSpeed =
-      await WeatherInfo(station.location.x, station.location.y)
-          .getWindSpeed();
+      await WeatherInfo(station.location.x, station.location.y).getWindSpeed();
   bool _alerted = await checkReturn(station.id);
   if (windSpeed > maxWindspeed && !_alerted) {
     _windAlert(context, station);
@@ -40,7 +39,7 @@ void _windAlert(BuildContext context, Station station) {
       builder: (context) => AlertDialog(
             content: Text(
               '${station.name} encountered overpowered wind (> 10 km/h). Please allow access to the returning system',
-              style: infoTextStyle,
+              style: infoTextStyle(),
             ),
             actions: [
               TextButton.icon(

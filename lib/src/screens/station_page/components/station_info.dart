@@ -8,6 +8,7 @@ import 'package:ocean_station_auto/src/screens/station_page/components/camera.da
 import 'package:ocean_station_auto/src/screens/station_page/components/employee_list.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 
 enum ConnectionState { notDownloaded, loading, finished }
 
@@ -49,7 +50,9 @@ class _StationInfoState extends State<StationInfo> {
   }
 
   void _getParam(Timer timer) async {
-    String sql = await _getCmd();
+    String sql = await getCmd(
+      connection, "Get station data"
+    );
     var results = await connection.query(sql, [widget.station.id]);
     for (var row in results) {
       if (mounted) {
@@ -72,19 +75,6 @@ class _StationInfoState extends State<StationInfo> {
     }
   }
 
-  Future<String> _getCmd() async {
-    String cmd = '';
-    String sql = '''SELECT sqlFunction FROM permission 
-        WHERE permissionId IN 
-          (SELECT permissionId FROM type_permission WHERE typeId IN (1,2)) 
-        AND name = "Get station data"''';
-    var results = await connection.query(sql);
-    for (var row in results) {
-      cmd = row[0].toString().replaceAll('{}', '?');
-    }
-    return cmd;
-  }
-
   @override
   Widget build(BuildContext context) {
     return (_connState == ConnectionState.finished)
@@ -97,92 +87,97 @@ class _StationInfoState extends State<StationInfo> {
                 children: [
                   Text(
                     'Location: ${_station.location.x} ${_station.location.y}',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'VoltDC: ${_station.voltDC.toStringAsFixed(2)} V',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'CurrentDC: ${_station.currentDC.toStringAsFixed(2)} A',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'VoltAC: ${_station.voltAC.toStringAsFixed(2)} V',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'CurrentAC: ${_station.currentAC.toStringAsFixed(2)} A',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'Power: ${_station.power.toStringAsFixed(2)} W',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'Energy: ${_station.energy.toStringAsFixed(2)} kW/h',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'Frequency: ${_station.frequency.toStringAsFixed(2)} Hz',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Text(
                     'Power Factor: ${_station.powerFactor.toStringAsFixed(2)}',
-                    style: infoTextStyle,
+                    style: infoTextStyle(),
                   ),
                   Center(
-                    child: Row(
-                      children: [
-                        const Text(
-                          'State: ',
-                          style: infoTextStyle,
-                        ),
-                        _station.state
-                            ? Row(
-                                children: const [
-                                  Text(
-                                    'good',
-                                    style: TextStyle(color: Colors.green),
-                                  ),
-                                  SizedBox(
-                                    width: 5.0,
-                                  ),
-                                  Icon(
-                                    Icons.check_box,
-                                    color: Colors.green,
-                                  ),
-                                ],
-                              )
-                            : Row(
-                                children: const [
-                                  Text(
-                                    'bad',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  SizedBox(
-                                    width: 5.0,
-                                  ),
-                                  Icon(
-                                    Icons.warning,
-                                    color: Colors.red,
-                                  ),
-                                ],
-                              ),
-                      ],
+                      child: Row(children: [
+                    Text(
+                      'State: ',
+                      style: infoTextStyle(),
                     ),
-                  ),
+                    _station.state
+                        ? Row(
+                            children: const [
+                              Text(
+                                'good',
+                                style: TextStyle(color: Colors.green),
+                              ),
+                              SizedBox(
+                                width: 5.0,
+                              ),
+                              Icon(
+                                Icons.check_box,
+                                color: Colors.green,
+                              ),
+                            ],
+                          )
+                        : Row(children: [
+                            const Text(
+                              'bad',
+                              style: TextStyle(color: Colors.red),
+                            ),
+                            const SizedBox(
+                              width: 5.0,
+                            ),
+                            const Icon(
+                              Icons.warning,
+                              color: Colors.red,
+                            ),
+                            const SizedBox(
+                              width: 15.0,
+                            ),
+                            InkWell(
+                              onTap: () {},
+                              child: Text(
+                                'Report bad state',
+                                style: infoTextStyle(color: Colors.red),
+                              ),
+                            ),
+                          ])
+                  ])),
                   if (!_station.state)
                     InkWell(
                       onTap: () => Navigator.restorablePushNamed(
                           context, RepairerPage.routeName,
                           arguments: <String, int>{'id': _station.id}),
-                      child: Row(children: const [
+                      child: Row(children: [
                         Text(
                           'Send repairer',
-                          style: infoTextStyle,
+                          style: infoTextStyle(),
                         ),
-                        Icon(Icons.arrow_forward_ios_rounded)
+                        const Icon(Icons.arrow_forward_ios_rounded)
                       ]),
                     ),
                   InkWell(
@@ -190,12 +185,12 @@ class _StationInfoState extends State<StationInfo> {
                         context, EmployeeListPage.routeName,
                         arguments: <String, int>{'id': _station.id}),
                     child: Row(
-                      children: const [
+                      children: [
                         Text(
                           'Employee List',
-                          style: infoTextStyle,
+                          style: infoTextStyle(),
                         ),
-                        Icon(Icons.arrow_forward_ios_rounded),
+                        const Icon(Icons.arrow_forward_ios_rounded),
                       ],
                     ),
                   ),
@@ -206,12 +201,12 @@ class _StationInfoState extends State<StationInfo> {
                           arguments: <String, int>{'index': widget.index});
                     },
                     child: Row(
-                      children: const [
+                      children: [
                         Text(
                           'Security Camera',
-                          style: infoTextStyle,
+                          style: infoTextStyle(),
                         ),
-                        Icon(Icons.arrow_forward_ios_rounded),
+                        const Icon(Icons.arrow_forward_ios_rounded),
                       ],
                     ),
                   )

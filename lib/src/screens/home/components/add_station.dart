@@ -85,9 +85,9 @@ class _AddStationState extends State<AddStation> {
             actions: [
               TextButton(
                 onPressed: () => addStation(),
-                child: const Text(
+                child: Text(
                   'Add',
-                  style: infoTextStyle,
+                  style: infoTextStyle(),
                 ),
               )
             ],

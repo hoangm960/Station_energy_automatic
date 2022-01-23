@@ -10,13 +10,10 @@ import 'models/user.dart';
 
 const Color primaryColor = Colors.blue;
 const Color secondaryColor = Colors.white;
-const TextStyle infoTextStyle = TextStyle(
-  fontSize: 18.0,
-  fontWeight: FontWeight.w300,
-);
-const TextStyle boldTextStyle =
-    TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold);
-
+TextStyle infoTextStyle({Color? color}) =>
+    TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300, color: color);
+TextStyle boldTextStyle({Color? color}) =>
+    TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold, color: color);
 Size getScreenSize(context) {
   return MediaQuery.of(context).size;
 }
@@ -49,12 +46,12 @@ Future getUser() async {
 }
 
 Future<Station> getStation(stationIndex) async {
-    await StationList().init();
-    Paths paths = Paths();
-    final file = await paths.stationsFile;
+  await StationList().init();
+  Paths paths = Paths();
+  final file = await paths.stationsFile;
 
-    final contents = await file.readAsString();
-    final List jsonStations = json.decode(contents);
-    return List.generate(jsonStations.length,
-        (index) => Station.fromJson(jsonStations[index]))[stationIndex];
+  final contents = await file.readAsString();
+  final List jsonStations = json.decode(contents);
+  return List.generate(jsonStations.length,
+      (index) => Station.fromJson(jsonStations[index]))[stationIndex];
 }

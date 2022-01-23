@@ -26,16 +26,16 @@ class StationGraphList extends StatelessWidget {
         children: [
           Text(
             type ? 'Output DC' : 'Output AC',
-            style: boldTextStyle,
+            style: boldTextStyle(),
           ),
           Row(
             children: [
               Expanded(
                   child: Column(
                 children: [
-                  const Text(
+                  Text(
                     'Voltage:',
-                    style: boldTextStyle,
+                    style: boldTextStyle(),
                   ),
                   StationGraph(
                     type: type ? 'voltDC' : 'voltAC',
@@ -47,9 +47,9 @@ class StationGraphList extends StatelessWidget {
               Expanded(
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       'Current:',
-                      style: boldTextStyle,
+                      style: boldTextStyle(),
                     ),
                     StationGraph(
                         type: type ? 'currentDC' : 'currentAC',
@@ -62,9 +62,9 @@ class StationGraphList extends StatelessWidget {
           ),
           Column(
             children: [
-              const Text(
+              Text(
                 'Energy:',
-                style: boldTextStyle,
+                style: boldTextStyle(),
               ),
               StationGraph(
                 type: type ? 'voltDC * currentDC' : 'energyAC',

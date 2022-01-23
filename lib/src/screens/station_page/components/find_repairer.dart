@@ -5,6 +5,7 @@ import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 
 enum ConnectionState { notDownloaded, loading, finished }
 
@@ -42,22 +43,8 @@ class _RepairerPageState extends State<RepairerPage> {
     Future.delayed(const Duration(seconds: 1), () => _getRepairer());
   }
 
-  Future<String> _getCmd(cmdName) async {
-    String cmd = '';
-    String sql = '''SELECT sqlFunction FROM permission 
-        WHERE permissionId IN 
-          (SELECT permissionId FROM type_permission WHERE typeId = ?) 
-        AND name = "$cmdName"''';
-    User _user = await getUser();
-    var results = await connection.query(sql, [_user.typeId]);
-    for (var row in results) {
-      cmd = row[0].toString().replaceAll('{}', '?');
-    }
-    return cmd;
-  }
-
   void _getRepairer() async {
-    String sql = await Future.value(_getCmd('Get all repairers'));
+    String sql = await Future.value(getCmd(connection, 'Get all repairers'));
     List<User> _repairerList = [];
     if (sql.isNotEmpty) {
       var results = await connection.query(sql);
@@ -79,7 +66,7 @@ class _RepairerPageState extends State<RepairerPage> {
   }
 
   void _assignRepairer(userId) async {
-    String sql = await Future.value(_getCmd('Assign repair'));
+    String sql = await getCmd(connection, 'Assign repair');
     await connection.query(sql, [widget.stationId, userId]);
   }
 
@@ -110,19 +97,19 @@ class _RepairerPageState extends State<RepairerPage> {
                               flex: 1,
                               child: Text(
                                 'ID: ${repairerList[index].id}',
-                                style: boldTextStyle,
+                                style: boldTextStyle(),
                               )),
                           Expanded(
                               flex: 2,
                               child: Text(
                                 'Username: ${repairerList[index].username}',
-                                style: boldTextStyle,
+                                style: boldTextStyle(),
                               )),
                           Expanded(
                               flex: 3,
                               child: Text(
                                 'Display name: ${repairerList[index].displayName}',
-                                style: boldTextStyle,
+                                style: boldTextStyle(),
                               )),
                         ],
                       ),
