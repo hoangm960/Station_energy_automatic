@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:weather/weather.dart';
@@ -22,18 +23,18 @@ class WeatherInfo {
   }
 }
 
-void checkWindSpeed(BuildContext context, Station station) async {
+void checkWindSpeed(MySqlConnection connection, BuildContext context, Station station) async {
   double maxWindspeed = 10.0;
 
   double windSpeed =
       await WeatherInfo(station.location.x, station.location.y).getWindSpeed();
-  bool _alerted = await checkReturn(station.id);
+  bool _alerted = await checkReturn(connection, station.id);
   if (windSpeed > maxWindspeed && !_alerted) {
-    _windAlert(context, station);
+    _windAlert(connection, context, station);
   }
 }
 
-void _windAlert(BuildContext context, Station station) {
+void _windAlert(MySqlConnection connection, BuildContext context, Station station) {
   showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -44,7 +45,7 @@ void _windAlert(BuildContext context, Station station) {
             actions: [
               TextButton.icon(
                   onPressed: () {
-                    returnSystem(station.id);
+                    returnSystem(connection, station.id);
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.check),

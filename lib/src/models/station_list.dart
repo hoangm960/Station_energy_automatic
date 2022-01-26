@@ -6,6 +6,7 @@ import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 
 import 'location.dart';
 
@@ -34,7 +35,18 @@ class StationList {
 
   Future getStationList() async {
     List<Station> stations = [];
-    String sql = await getCmd();
+    String cmdName = '';
+    switch (_user.typeId) {
+      case 1:
+        cmdName = "Get all stations data";
+        break;
+      case 2:
+        cmdName = "Get station data";
+        break;
+      default:
+        cmdName = "Get station data";
+    }
+    String sql = await getCmd(connection, cmdName);
     if (sql.isNotEmpty) {
       var results = await connection.query(
           sql, _user.stationId != null ? [_user.stationId] : null);
@@ -55,23 +67,5 @@ class StationList {
       }
     }
     return stations;
-  }
-
-  Future<String> getCmd() async {
-    String cmd = '';
-    String sql = '''SELECT
-        CASE
-          WHEN typeId = 1 THEN 
-            (SELECT sqlFunction FROM permission WHERE name = "Get all stations data")
-          WHEN typeId = 2 THEN
-            (SELECT sqlFunction FROM permission WHERE name = "Get station data")
-        END
-      FROM user
-      WHERE typeId = ?''';
-    var results = await connection.query(sql, [_user.typeId]);
-    for (var row in results) {
-      cmd = row[0].toString().replaceAll('{}', '?');
-    }
-    return cmd;
   }
 }

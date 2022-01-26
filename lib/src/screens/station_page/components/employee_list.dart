@@ -50,7 +50,13 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   void setUpCheckWind() async {
     Station _station = await getStation(0);
     timer = Timer.periodic(const Duration(seconds: 20),
-        (Timer timer) => checkWindSpeed(context, _station));
+        (Timer timer) => checkWindSpeed(connection, context, _station));
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   void _getEmployees() async {
@@ -79,7 +85,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose Repairer'),
+        title: const Text('Employee List'),
       ),
       body: (_connState == ConnectionState.finished)
           ? ListView.builder(
@@ -116,7 +122,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
                   ),
                 );
               },
-            )
+            ) 
           : const Center(
               child: CircularProgressIndicator(),
             ),

@@ -6,6 +6,8 @@ import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/home/components/station.dart';
 
+enum ConnectionState { notDownloaded, loading, finished }
+
 class StationListView extends StatefulWidget {
   const StationListView({Key? key}) : super(key: key);
 
@@ -14,32 +16,45 @@ class StationListView extends StatefulWidget {
 }
 
 class _StationListViewState extends State<StationListView> {
-  Future<List<Station>> _getStation() async {
+  late List<Station> _stations;
+  ConnectionState _connState = ConnectionState.notDownloaded;
+
+  @override
+  void initState() {
+    super.initState();
+    _getStation();
+  }
+
+  void _getStation() async {
+    setState(() {
+      _connState = ConnectionState.loading;
+    });
     await StationList().init();
     Paths paths = Paths();
     final file = await paths.stationsFile;
-
     final contents = await file.readAsString();
-    final List jsonStations = json.decode(contents);
-    return List.generate(
-        jsonStations.length, (index) => Station.fromJson(jsonStations[index]));
+    if (contents.isNotEmpty) {
+      final List jsonStations = json.decode(contents);
+      setState(() {
+        _stations = List.generate(jsonStations.length,
+            (index) => Station.fromJson(jsonStations[index]));
+        _connState = ConnectionState.finished;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Station>>(
-        future: _getStation(),
-        builder: (BuildContext context, AsyncSnapshot<List<Station>> snapshot) {
-          return GridView.extent(
+    return (_connState == ConnectionState.finished)
+        ? GridView.extent(
             maxCrossAxisExtent: 300,
             padding: const EdgeInsets.all(10.0),
-            children: snapshot.hasData
-                ? List.generate(
-                    snapshot.data!.length,
-                    (index) => StationView(
-                        index: index, station: snapshot.data![index]))
-                : [const Center(child: CircularProgressIndicator())],
+            children: List.generate(
+                _stations.length,
+                (index) =>
+                    StationView(index: index, station: _stations[index])))
+        : const Center(
+            child: CircularProgressIndicator(),
           );
-        });
   }
 }

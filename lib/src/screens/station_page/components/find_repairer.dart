@@ -20,7 +20,6 @@ class RepairerPage extends StatefulWidget {
 }
 
 class _RepairerPageState extends State<RepairerPage> {
-  String dropdownValue = 'One';
   var db = Mysql();
   late MySqlConnection connection;
   ConnectionState _connState = ConnectionState.notDownloaded;
@@ -56,12 +55,12 @@ class _RepairerPageState extends State<RepairerPage> {
               displayName: row[2],
               type: 'Repairer',
               typeId: 3));
-          setState(() {
-            repairerList = _repairerList;
-            _connState = ConnectionState.finished;
-          });
         }
       }
+      setState(() {
+        repairerList = _repairerList;
+        _connState = ConnectionState.finished;
+      });
     }
   }
 
@@ -77,7 +76,7 @@ class _RepairerPageState extends State<RepairerPage> {
         title: const Text('Choose Repairer'),
       ),
       body: (_connState == ConnectionState.finished)
-          ? ListView.builder(
+          ? (repairerList.isNotEmpty) ? ListView.builder(
               itemCount: repairerList.length,
               itemBuilder: (BuildContext context, int index) {
                 return SizedBox(
@@ -117,7 +116,7 @@ class _RepairerPageState extends State<RepairerPage> {
                   ),
                 );
               },
-            )
+            ) : Center(child: Text('No availiable repairer', style: infoTextStyle(),))
           : const Center(
               child: CircularProgressIndicator(),
             ),

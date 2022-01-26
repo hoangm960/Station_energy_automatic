@@ -11,6 +11,8 @@ import 'package:ocean_station_auto/src/settings/settings_view.dart';
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
 
+enum ConnectionState { notDownloaded, loading, finished }
+
 class StationScreen extends StatefulWidget {
   final int index;
   const StationScreen(this.index, {Key? key}) : super(key: key);
@@ -23,31 +25,34 @@ class StationScreen extends StatefulWidget {
 
 class _StationScreenState extends State<StationScreen> {
   Station? _station;
+  ConnectionState _connState = ConnectionState.notDownloaded;
 
   @override
   void initState() {
     super.initState();
-    _getStation().then((value) {
-      setState(() {
-        _station = value[widget.index];
-      });
-    });
+    _getStation();
   }
 
-  Future<List<Station>> _getStation() async {
+  void _getStation() async {
+    setState(() {
+      _connState = ConnectionState.loading;
+    });
     await StationList().init();
     Paths paths = Paths();
     final file = await paths.stationsFile;
 
     final contents = await file.readAsString();
     final List jsonStations = json.decode(contents);
-    return List.generate(
-        jsonStations.length, (index) => Station.fromJson(jsonStations[index]));
+    setState(() {
+      _station = List.generate(jsonStations.length,
+          (index) => Station.fromJson(jsonStations[index]))[widget.index];
+      _connState = ConnectionState.finished;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return (_station != null)
+    return (_connState == ConnectionState.finished)
         ? Scaffold(
             appBar: AppBar(
               title: Text(_station!.name),

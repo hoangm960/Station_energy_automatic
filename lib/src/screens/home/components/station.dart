@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
+import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/wind.dart';
 
 class StationView extends StatefulWidget {
@@ -16,11 +18,22 @@ class StationView extends StatefulWidget {
 
 class _StationViewState extends State<StationView> {
   late Timer timer;
+  Mysql db = Mysql();
+  late MySqlConnection connection;
+
 
   @override
   void initState() {
     super.initState();
-    timer = Timer.periodic(const Duration(seconds: 20), (Timer timer) => checkWindSpeed(context, widget.station));
+  }
+
+  void setUpConn() async {
+    MySqlConnection _connection = await db.getConn();
+    setState(() {
+      connection = _connection;
+    });
+    timer = Timer.periodic(const Duration(seconds: 20),
+        (Timer timer) => checkWindSpeed(connection, context, widget.station));
   }
 
   @override
