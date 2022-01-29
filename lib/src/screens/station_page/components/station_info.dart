@@ -4,6 +4,7 @@ import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/location.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
+import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/employee_list.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/find_repairer.dart';
@@ -29,6 +30,7 @@ class _StationInfoState extends State<StationInfo> {
   late Timer timer;
   late Station _station;
   ConnectionState _connState = ConnectionState.notDownloaded;
+  late User _user;
 
   @override
   void initState() {
@@ -41,6 +43,7 @@ class _StationInfoState extends State<StationInfo> {
     setState(() {
       _connState = ConnectionState.loading;
     });
+    _user = await getUser();
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
@@ -73,11 +76,11 @@ class _StationInfoState extends State<StationInfo> {
     }
   }
 
-  void _reportBadState() async {
-    String sql = await getCmd(connection, 'Report bad state');
+  void _toggleState() async {
+    String sql = await getCmd(connection, 'Toggle state');
     await connection.query(sql, [widget.station.id]);
     setState(() {
-      _station.state = false;
+      _station.state = !_station.state;
     });
   }
 
@@ -151,7 +154,7 @@ class _StationInfoState extends State<StationInfo> {
                                 width: 15.0,
                               ),
                               InkWell(
-                                onTap: () => _reportBadState(),
+                                onTap: () => _toggleState(),
                                 child: Text(
                                   'Report bad state',
                                   style: infoTextStyle(color: Colors.red),
@@ -159,21 +162,31 @@ class _StationInfoState extends State<StationInfo> {
                               ),
                             ],
                           )
-                        : Row(children: const [
-                            Text(
+                        : Row(children: [
+                            const Text(
                               'bad',
                               style: TextStyle(color: Colors.red),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5.0,
                             ),
-                            Icon(
+                            const Icon(
                               Icons.warning,
                               color: Colors.red,
                             ),
+                            const SizedBox(
+                              width: 15.0,
+                            ),
+                            InkWell(
+                              onTap: () => _toggleState(),
+                              child: Text(
+                                'Report fixed state',
+                                style: infoTextStyle(color: Colors.green),
+                              ),
+                            ),
                           ])
                   ])),
-                  if (!_station.state)
+                  if (!_station.state && _user.id == 1) 
                     InkWell(
                       onTap: () => Navigator.restorablePushNamed(
                           context, RepairerPage.routeName,
