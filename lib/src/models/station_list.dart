@@ -15,15 +15,18 @@ class StationList {
   late MySqlConnection connection;
   late List<Station> stationList;
   late User _user;
+  List<Map> stationsJson = [];
 
   StationList();
 
   Future init() async {
     connection = await db.getConn();
     _user = await getUser();
-    stationList = await getStationList();
-    List<Map> stationsJson = List.generate(
-        stationList.length, (index) => stationList[index].toJson());
+    stationList = await getStationList() ?? [];
+    if (stationList.isNotEmpty) {
+      stationsJson = List.generate(
+          stationList.length, (index) => stationList[index].toJson());
+    }
     writeData(stationsJson);
   }
 
@@ -36,11 +39,18 @@ class StationList {
   Future getStationList() async {
     List<Station> stations = [];
     String cmdName = '';
+
+    if (_user.stationId == null) {
+      return;
+    }
     switch (_user.typeId) {
       case 1:
         cmdName = "Get all stations data";
         break;
       case 2:
+        cmdName = "Get station data";
+        break;
+      case 3:
         cmdName = "Get station data";
         break;
       default:

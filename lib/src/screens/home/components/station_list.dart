@@ -46,13 +46,20 @@ class _StationListViewState extends State<StationListView> {
   @override
   Widget build(BuildContext context) {
     return (_connState == ConnectionState.finished)
-        ? GridView.extent(
-            maxCrossAxisExtent: 300,
-            padding: const EdgeInsets.all(10.0),
-            children: List.generate(
-                _stations.length,
-                (index) =>
-                    StationView(index: index, station: _stations[index])))
+        ? (_stations.isNotEmpty)
+            ? GridView.extent(
+                maxCrossAxisExtent: 300,
+                padding: const EdgeInsets.all(10.0),
+                children: List.generate(
+                    _stations.length,
+                    (index) =>
+                        StationView(index: index, station: _stations[index])))
+            : Center(
+                child: Text(
+                  'No assigned station',
+                  style: infoTextStyle(),
+                ),
+              )
         : const Center(
             child: CircularProgressIndicator(),
           );
