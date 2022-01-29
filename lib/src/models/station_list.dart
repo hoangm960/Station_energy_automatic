@@ -40,9 +40,6 @@ class StationList {
     List<Station> stations = [];
     String cmdName = '';
 
-    if (_user.stationId == null) {
-      return;
-    }
     switch (_user.typeId) {
       case 1:
         cmdName = "Get all stations data";
@@ -51,6 +48,9 @@ class StationList {
         cmdName = "Get station data";
         break;
       case 3:
+        if (_user.stationId == null) {
+          return;
+        }
         cmdName = "Get station data";
         break;
       default:
