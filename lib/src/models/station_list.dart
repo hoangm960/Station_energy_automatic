@@ -73,7 +73,8 @@ class StationList {
             energy: row[9] ?? 0.0,
             frequency: row[10] ?? 0.0,
             powerFactor: row[11] ?? 0.0,
-            state: (row[12] == 1) ? true : false));
+            state: (row[12] == 1) ? true : false,
+            returned: (row[13] == 1) ? true : false));
       }
     }
     return stations;

@@ -70,7 +70,8 @@ class _StationInfoState extends State<StationInfo> {
               energy: row[9],
               frequency: row[10],
               powerFactor: row[11],
-              state: (row[12] == 1) ? true : false);
+              state: (row[12] == 1) ? true : false,
+              returned: (row[13] == 1) ? true : false);
         });
       }
     }
@@ -81,6 +82,14 @@ class _StationInfoState extends State<StationInfo> {
     await connection.query(sql, [widget.station.id]);
     setState(() {
       _station.state = !_station.state;
+    });
+  }
+
+  void _toggleReturn() async {
+    String sql = await getCmd(connection, 'Toggle return station');
+    await connection.query(sql, [widget.station.id]);
+    setState(() {
+      _station.returned = !_station.returned;
     });
   }
 
@@ -186,7 +195,7 @@ class _StationInfoState extends State<StationInfo> {
                             ),
                           ])
                   ])),
-                  if (!_station.state && _user.id == 1) 
+                  if (!_station.state && _user.id == 1)
                     InkWell(
                       onTap: () => Navigator.restorablePushNamed(
                           context, RepairerPage.routeName,
@@ -228,7 +237,28 @@ class _StationInfoState extends State<StationInfo> {
                         const Icon(Icons.arrow_forward_ios_rounded),
                       ],
                     ),
-                  )
+                  ),
+                  if (_user.typeId != 4)
+                    Row(
+                      children: [
+                        _station.returned
+                            ? Text(
+                                'Energy arm returned',
+                                style: boldTextStyle(
+                                    color: Colors.red, size: 18.0),
+                              )
+                            : Text(
+                                'Energy arm not returned',
+                                style: boldTextStyle(
+                                    color: Colors.green, size: 18.0),
+                              ),
+                        IconButton(
+                            onPressed: () => _toggleReturn(),
+                            icon: Icon(_station.returned
+                                ? Icons.toggle_on
+                                : Icons.toggle_off_outlined))
+                      ],
+                    ),
                 ]),
           )
         : const Center(
