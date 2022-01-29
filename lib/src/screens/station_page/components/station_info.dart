@@ -50,9 +50,7 @@ class _StationInfoState extends State<StationInfo> {
   }
 
   void _getParam(Timer timer) async {
-    String sql = await getCmd(
-      connection, "Get station data"
-    );
+    String sql = await getCmd(connection, "Get station data");
     var results = await connection.query(sql, [widget.station.id]);
     for (var row in results) {
       if (mounted) {
@@ -73,6 +71,14 @@ class _StationInfoState extends State<StationInfo> {
         });
       }
     }
+  }
+
+  void _reportBadState() async {
+    String sql = await getCmd(connection, 'Report bad state');
+    await connection.query(sql, [widget.station.id]);
+    setState(() {
+      _station.state = false;
+    });
   }
 
   @override
@@ -129,41 +135,41 @@ class _StationInfoState extends State<StationInfo> {
                     ),
                     _station.state
                         ? Row(
-                            children: const [
-                              Text(
+                            children: [
+                              const Text(
                                 'good',
                                 style: TextStyle(color: Colors.green),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5.0,
                               ),
-                              Icon(
+                              const Icon(
                                 Icons.check_box,
                                 color: Colors.green,
                               ),
+                              const SizedBox(
+                                width: 15.0,
+                              ),
+                              InkWell(
+                                onTap: () => _reportBadState(),
+                                child: Text(
+                                  'Report bad state',
+                                  style: infoTextStyle(color: Colors.red),
+                                ),
+                              ),
                             ],
                           )
-                        : Row(children: [
-                            const Text(
+                        : Row(children: const [
+                            Text(
                               'bad',
                               style: TextStyle(color: Colors.red),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               width: 5.0,
                             ),
-                            const Icon(
+                            Icon(
                               Icons.warning,
                               color: Colors.red,
-                            ),
-                            const SizedBox(
-                              width: 15.0,
-                            ),
-                            InkWell(
-                              onTap: () {},
-                              child: Text(
-                                'Report bad state',
-                                style: infoTextStyle(color: Colors.red),
-                              ),
                             ),
                           ])
                   ])),

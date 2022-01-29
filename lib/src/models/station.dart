@@ -8,7 +8,7 @@ class Station {
   final int id;
   final String name;
   Location location;
-  final bool state;
+  bool state;
   final double voltDC;
   final double currentDC;
   final double voltAC;
