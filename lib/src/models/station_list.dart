@@ -45,6 +45,9 @@ class StationList {
         cmdName = "Get all stations data";
         break;
       case 2:
+        if (_user.stationId == null) {
+          return;
+        }
         cmdName = "Get station data";
         break;
       case 3:

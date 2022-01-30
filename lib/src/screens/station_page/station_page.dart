@@ -42,7 +42,7 @@ class _StationScreenState extends State<StationScreen> {
     final file = await paths.stationsFile;
 
     final contents = await file.readAsString();
-    final List jsonStations = json.decode(contents);
+    final List jsonStations = contents.isNotEmpty ? json.decode(contents) : [];
     setState(() {
       _station = List.generate(jsonStations.length,
           (index) => Station.fromJson(jsonStations[index]))[widget.index];
