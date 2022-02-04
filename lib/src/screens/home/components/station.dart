@@ -21,10 +21,16 @@ class _StationViewState extends State<StationView> {
   Mysql db = Mysql();
   late MySqlConnection connection;
 
-
   @override
   void initState() {
+    setUpConn();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
   }
 
   void setUpConn() async {

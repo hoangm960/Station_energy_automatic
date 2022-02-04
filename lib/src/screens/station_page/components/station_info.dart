@@ -39,6 +39,12 @@ class _StationInfoState extends State<StationInfo> {
     _station = widget.station;
   }
 
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.loading;
@@ -197,7 +203,7 @@ class _StationInfoState extends State<StationInfo> {
                               ),
                           ])
                   ])),
-                  if (!_station.state && _user.id == 1)
+                  if (!_station.state && _user.typeId == 1)
                     InkWell(
                       onTap: () => Navigator.restorablePushNamed(
                           context, RepairerPage.routeName,

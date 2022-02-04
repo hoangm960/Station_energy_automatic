@@ -65,6 +65,17 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
     }
   }
 
+  Color _getColor(typeId) {
+    switch (typeId) {
+      case 2:
+        return Colors.yellow;
+      case 3:
+        return Colors.blue;
+      default:
+        return Colors.black;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,41 +83,50 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
         title: const Text('Employee List'),
       ),
       body: (_connState == ConnectionState.finished)
-          ? ListView.builder(
-              itemCount: employeeList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                  height: 80.0,
-                  child: Card(
-                    margin: const EdgeInsetsDirectional.all(10.0),
-                    elevation: 5.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                            flex: 1,
-                            child: Text(
+          ? GridView.extent(
+              maxCrossAxisExtent: 350,
+              padding: const EdgeInsets.all(10.0),
+              children: List.generate(
+                employeeList.length,
+                (index) {
+                  return Container(
+                    decoration: BoxDecoration(border: Border.all(color: _getColor(employeeList[index].typeId), width: 10.0)),
+                    child: Card(
+                      elevation: 5.0,
+                      child: SizedBox(
+                        height: 100.0,
+                        width: 100.0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const CircleAvatar(
+                              child: Icon(
+                                Icons.person,
+                                size: 50.0,
+                              ),
+                              radius: 35.0,
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(
                               'ID: ${employeeList[index].id}',
-                              style: boldTextStyle(),
-                            )),
-                        Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Username: ${employeeList[index].username}',
-                              style: boldTextStyle(),
-                            )),
-                        Expanded(
-                            flex: 3,
-                            child: Text(
-                              'Display name: ${employeeList[index].displayName}',
-                              style: boldTextStyle(),
-                            )),
-                      ],
+                              style: boldTextStyle(size: 20.0),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(
+                              employeeList[index].displayName,
+                              style: boldTextStyle(size: 20.0),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
-                );
-              },
-            )
+                  );
+                },
+              ))
           : const Center(
               child: CircularProgressIndicator(),
             ),

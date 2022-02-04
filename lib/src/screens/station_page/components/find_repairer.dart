@@ -73,50 +73,55 @@ class _RepairerPageState extends State<RepairerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Choose Repairer'),
+        title: const Text('Employee List'),
       ),
       body: (_connState == ConnectionState.finished)
-          ? (repairerList.isNotEmpty) ? ListView.builder(
-              itemCount: repairerList.length,
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                  height: 80.0,
-                  child: InkWell(
-                    onTap: () {
-                      _assignRepairer(repairerList[index].id);
-                      Navigator.pop(context);
-                    },
-                    child: Card(
-                      margin: const EdgeInsetsDirectional.all(10.0),
+          ? GridView.extent(
+              maxCrossAxisExtent: 350,
+              padding: const EdgeInsets.all(10.0),
+              children: List.generate(
+                repairerList.length,
+                (index) {
+                  return Card(
                       elevation: 5.0,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                              flex: 1,
-                              child: Text(
+                      child: SizedBox(
+                        height: 100.0,
+                        width: 100.0,
+                        child: InkWell(
+                          onTap: () {
+                            _assignRepairer(repairerList[index].id);
+                            Navigator.pop(context);
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const CircleAvatar(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 50.0,
+                                ),
+                                radius: 35.0,
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
                                 'ID: ${repairerList[index].id}',
-                                style: boldTextStyle(),
-                              )),
-                          Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Username: ${repairerList[index].username}',
-                                style: boldTextStyle(),
-                              )),
-                          Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Display name: ${repairerList[index].displayName}',
-                                style: boldTextStyle(),
-                              )),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ) : Center(child: Text('No availiable repairer', style: infoTextStyle(),))
+                                style: boldTextStyle(size: 20.0),
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                repairerList[index].displayName,
+                                style: boldTextStyle(size: 20.0),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ));
+                },
+              ))
           : const Center(
               child: CircularProgressIndicator(),
             ),

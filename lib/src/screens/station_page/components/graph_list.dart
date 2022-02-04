@@ -121,6 +121,12 @@ class _StationGraphState extends State<StationGraph> {
     setUpConn();
   }
 
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
   void setUpConn() async {
     setState(() {
       _connState = ConnectionState.loading;
@@ -131,12 +137,6 @@ class _StationGraphState extends State<StationGraph> {
       _connState = ConnectionState.finished;
     });
     _getParam();
-  }
-
-  @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
   }
 
   void _updateDataSource(Timer timer) {

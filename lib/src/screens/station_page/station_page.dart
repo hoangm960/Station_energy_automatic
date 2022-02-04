@@ -38,7 +38,13 @@ class _StationScreenState extends State<StationScreen> {
     setUpConn();
   }
 
-  void _setUpCheckWind() async {
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
+
+  Future _setUpCheckWind() async {
     Station _station = await getStation(0);
     timer = Timer.periodic(const Duration(seconds: 20),
         (Timer timer) => checkWindSpeed(connection, context, _station));
@@ -53,7 +59,7 @@ class _StationScreenState extends State<StationScreen> {
       connection = _connection;
     });
     _station = await getStation(widget.index);
-    _setUpCheckWind();
+    await _setUpCheckWind();
     setState(() {
       _connState = ConnectionState.finished;
     });
