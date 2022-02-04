@@ -45,13 +45,13 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
       _connState = ConnectionState.finished;
     });
     _station = await getStation(widget.index);
-    _getCameraUrl();
+    await _getCameraUrl();
     initPlatformState();
   }
 
   
 
-  void _getCameraUrl() async {
+  Future _getCameraUrl() async {
     String sql = await _getCameraUrlCmd();
     if (sql.isNotEmpty) {
       var results = await connection.query(sql);

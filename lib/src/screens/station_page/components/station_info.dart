@@ -162,13 +162,14 @@ class _StationInfoState extends State<StationInfo> {
                               const SizedBox(
                                 width: 15.0,
                               ),
-                              InkWell(
-                                onTap: () => _toggleState(),
-                                child: Text(
-                                  'Report bad state',
-                                  style: infoTextStyle(color: Colors.red),
+                              if ([2, 3].contains(_user.typeId))
+                                InkWell(
+                                  onTap: () => _toggleState(),
+                                  child: Text(
+                                    'Report bad state',
+                                    style: infoTextStyle(color: Colors.red),
+                                  ),
                                 ),
-                              ),
                             ],
                           )
                         : Row(children: [
@@ -186,13 +187,14 @@ class _StationInfoState extends State<StationInfo> {
                             const SizedBox(
                               width: 15.0,
                             ),
-                            InkWell(
-                              onTap: () => _toggleState(),
-                              child: Text(
-                                'Report fixed state',
-                                style: infoTextStyle(color: Colors.green),
+                            if ([2, 3].contains(_user.typeId))
+                              InkWell(
+                                onTap: () => _toggleState(),
+                                child: Text(
+                                  'Report fixed state',
+                                  style: infoTextStyle(color: Colors.green),
+                                ),
                               ),
-                            ),
                           ])
                   ])),
                   if (!_station.state && _user.id == 1)
@@ -208,36 +210,38 @@ class _StationInfoState extends State<StationInfo> {
                         const Icon(Icons.arrow_forward_ios_rounded)
                       ]),
                     ),
-                  InkWell(
-                    onTap: () => Navigator.restorablePushNamed(
-                        context, EmployeeListPage.routeName,
-                        arguments: <String, int>{'id': _station.id}),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Employee List',
-                          style: infoTextStyle(),
-                        ),
-                        const Icon(Icons.arrow_forward_ios_rounded),
-                      ],
+                  if (_user.typeId != 4)
+                    InkWell(
+                      onTap: () => Navigator.restorablePushNamed(
+                          context, EmployeeListPage.routeName,
+                          arguments: <String, int>{'id': _station.id}),
+                      child: Row(
+                        children: [
+                          Text(
+                            'Employee List',
+                            style: infoTextStyle(),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded),
+                        ],
+                      ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Navigator.restorablePushNamed(
-                          context, LiveStreamingPlayer.routeName,
-                          arguments: <String, int>{'index': widget.index});
-                    },
-                    child: Row(
-                      children: [
-                        Text(
-                          'Security Camera',
-                          style: infoTextStyle(),
-                        ),
-                        const Icon(Icons.arrow_forward_ios_rounded),
-                      ],
+                  if (_user.typeId != 4)
+                    InkWell(
+                      onTap: () {
+                        Navigator.restorablePushNamed(
+                            context, LiveStreamingPlayer.routeName,
+                            arguments: <String, int>{'index': widget.index});
+                      },
+                      child: Row(
+                        children: [
+                          Text(
+                            'Security Camera',
+                            style: infoTextStyle(),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded),
+                        ],
+                      ),
                     ),
-                  ),
                   if (_user.typeId != 4)
                     Row(
                       children: [

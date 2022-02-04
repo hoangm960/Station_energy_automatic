@@ -1,12 +1,14 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 import 'package:ocean_station_auto/src/settings/settings_view.dart';
+import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/wind.dart';
 
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
@@ -26,26 +28,33 @@ class StationScreen extends StatefulWidget {
 class _StationScreenState extends State<StationScreen> {
   Station? _station;
   ConnectionState _connState = ConnectionState.notDownloaded;
+  late Timer timer;
+  var db = Mysql();
+  late MySqlConnection connection;
 
   @override
   void initState() {
     super.initState();
-    _getStation();
+    setUpConn();
   }
 
-  void _getStation() async {
+  void _setUpCheckWind() async {
+    Station _station = await getStation(0);
+    timer = Timer.periodic(const Duration(seconds: 20),
+        (Timer timer) => checkWindSpeed(connection, context, _station));
+  }
+
+  Future setUpConn() async {
     setState(() {
       _connState = ConnectionState.loading;
     });
-    await StationList().init();
-    Paths paths = Paths();
-    final file = await paths.stationsFile;
-
-    final contents = await file.readAsString();
-    final List jsonStations = contents.isNotEmpty ? json.decode(contents) : [];
+    MySqlConnection _connection = await db.getConn();
     setState(() {
-      _station = List.generate(jsonStations.length,
-          (index) => Station.fromJson(jsonStations[index]))[widget.index];
+      connection = _connection;
+    });
+    _station = await getStation(widget.index);
+    _setUpCheckWind();
+    setState(() {
       _connState = ConnectionState.finished;
     });
   }
