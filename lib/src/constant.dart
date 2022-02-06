@@ -18,8 +18,9 @@ Size getScreenSize(context) {
   return MediaQuery.of(context).size;
 }
 
-BoxDecoration roundedBorder({Color? color}) => BoxDecoration(
-    border: Border.all(color: Colors.white),
+BoxDecoration roundedBorder({Color? color, Color? borderColor,}) => BoxDecoration(
+    color: color,
+    border: Border.all(color: borderColor ?? Colors.white),
     borderRadius: const BorderRadius.all(Radius.circular(10.0)));
 
 class Paths {

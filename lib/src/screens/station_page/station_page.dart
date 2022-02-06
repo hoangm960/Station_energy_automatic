@@ -110,15 +110,15 @@ class _StationScreenState extends State<StationScreen> {
                               Expanded(
                                 flex: 3,
                                 child: Container(
-                                  height: getScreenSize(context).height - 100.0,
+                                  height: getScreenSize(context).height / 3,
                                   margin: const EdgeInsets.fromLTRB(
                                       10.0, 10.0, 20.0, 10.0),
                                   decoration:
-                                      roundedBorder(color: Colors.white),
+                                      roundedBorder(borderColor: Colors.white),
                                   child: Row(
                                     children: [
                                       Expanded(
-                                        flex: 3,
+                                        flex: 2,
                                         child: StationMap(station: _station!),
                                       ),
                                       Expanded(
@@ -137,11 +137,11 @@ class _StationScreenState extends State<StationScreen> {
                               Expanded(
                                 flex: 1,
                                 child: Container(
-                                  height: getScreenSize(context).height - 100.0,
+                                  height: getScreenSize(context).height / 3,
                                   margin: const EdgeInsets.fromLTRB(
                                       10.0, 10.0, 20.0, 10.0),
                                   decoration:
-                                      roundedBorder(color: Colors.white),
+                                      roundedBorder(borderColor: Colors.white),
                                   child: ButtonList(
                                       connection: connection,
                                       station: _station!,
@@ -161,3 +161,5 @@ class _StationScreenState extends State<StationScreen> {
             body: const Center(child: CircularProgressIndicator()));
   }
 }
+
+
