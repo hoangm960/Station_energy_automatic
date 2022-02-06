@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
+import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 import 'package:ocean_station_auto/src/settings/settings_view.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/wind.dart';
 
+import 'components/actionButtons.dart';
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
 
@@ -31,6 +33,7 @@ class _StationScreenState extends State<StationScreen> {
   late Timer timer;
   var db = Mysql();
   late MySqlConnection connection;
+  late User _user;
 
   @override
   void initState() {
@@ -54,6 +57,7 @@ class _StationScreenState extends State<StationScreen> {
     setState(() {
       _connState = ConnectionState.loading;
     });
+    _user = await getUser();
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
@@ -70,7 +74,11 @@ class _StationScreenState extends State<StationScreen> {
     return (_connState == ConnectionState.finished)
         ? Scaffold(
             appBar: AppBar(
-              title: Text(_station!.name),
+              title: Text(
+                _station!.name,
+                style: boldTextStyle(size: 25.0),
+              ),
+              centerTitle: true,
               actions: [
                 IconButton(
                     onPressed: () {
@@ -95,19 +103,53 @@ class _StationScreenState extends State<StationScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
-                        Row(children: [
-                          Expanded(
-                            flex: 4,
-                            child: StationMap(station: _station!),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: StationInfo(
-                              index: widget.index,
-                              station: _station!,
-                            ),
-                          ),
-                        ]),
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: Container(
+                                  height: getScreenSize(context).height - 100.0,
+                                  margin: const EdgeInsets.fromLTRB(
+                                      10.0, 10.0, 20.0, 10.0),
+                                  decoration:
+                                      roundedBorder(color: Colors.white),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: StationMap(station: _station!),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: StationInfo(
+                                          connection: connection,
+                                          index: widget.index,
+                                          user: _user,
+                                          station: _station!,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Container(
+                                  height: getScreenSize(context).height - 100.0,
+                                  margin: const EdgeInsets.fromLTRB(
+                                      10.0, 10.0, 20.0, 10.0),
+                                  decoration:
+                                      roundedBorder(color: Colors.white),
+                                  child: ButtonList(
+                                      connection: connection,
+                                      station: _station!,
+                                      user: _user,
+                                      index: widget.index),
+                                ),
+                              ),
+                            ]),
                         const StationGraphList(type: true, id: 2),
                         const StationGraphList(type: false, id: 2),
                       ],

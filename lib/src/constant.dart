@@ -18,6 +18,10 @@ Size getScreenSize(context) {
   return MediaQuery.of(context).size;
 }
 
+BoxDecoration roundedBorder({Color? color}) => BoxDecoration(
+    border: Border.all(color: Colors.white),
+    borderRadius: const BorderRadius.all(Radius.circular(10.0)));
+
 class Paths {
   Future<String> get localPath async {
     final directory = await getApplicationDocumentsDirectory();
@@ -48,11 +52,9 @@ Future getUser() async {
 Future<Station> getStation(stationIndex) async {
   await StationList().init();
   Paths paths = Paths();
-  final file = await paths.stationsFile;
-
-  final contents = await file.readAsString();
-  print(file);
-  final List jsonStations = await json.decode(contents);
+  File file = await paths.stationsFile;
+  String contents = await file.readAsString();
+  List jsonStations = await json.decode(contents);
   return List.generate(jsonStations.length,
       (index) => Station.fromJson(jsonStations[index]))[stationIndex];
 }

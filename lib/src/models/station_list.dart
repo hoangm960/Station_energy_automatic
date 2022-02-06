@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
@@ -22,18 +21,16 @@ class StationList {
   Future init() async {
     connection = await db.getConn();
     _user = await getUser();
-    stationList = await getStationList() ?? [];
-    if (stationList.isNotEmpty) {
-      stationsJson = List.generate(
-          stationList.length, (index) => stationList[index].toJson());
-    }
-    writeData(stationsJson);
+    stationList = await getStationList();
+    stationsJson = List.generate(
+        stationList.length, (index) => stationList[index].toJson());
+    await writeData(stationsJson);
   }
 
-  Future<File> writeData(var data) async {
+  Future writeData(var data) async {
     Paths paths = Paths();
     final file = await paths.stationsFile;
-    return file.writeAsString(json.encode(data));
+    file.writeAsString(json.encode(data));
   }
 
   Future getStationList() async {
