@@ -103,53 +103,48 @@ class _StationScreenState extends State<StationScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Container(
-                                  height: getScreenSize(context).height / 3,
-                                  margin: const EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 20.0, 10.0),
-                                  decoration:
-                                      roundedBorder(borderColor: Colors.white),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        flex: 2,
-                                        child: StationMap(station: _station!),
-                                      ),
-                                      Expanded(
-                                        flex: 1,
-                                        child: StationInfo(
-                                          connection: connection,
-                                          index: widget.index,
-                                          user: _user,
-                                          station: _station!,
+                        Container(
+                          height: getScreenSize(context).height / 3,
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  flex: 5,
+                                  child: Container(
+                                    margin: const EdgeInsets.fromLTRB(
+                                        10.0, 10.0, 20.0, 10.0),
+                                    decoration: roundedBorder(
+                                        borderColor: Colors.white),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: StationMap(station: _station!),
                                         ),
-                                      ),
-                                    ],
+                                        Expanded(
+                                          flex: 1,
+                                          child: StationInfo(
+                                            connection: connection,
+                                            index: widget.index,
+                                            user: _user,
+                                            station: _station!,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Container(
-                                  height: getScreenSize(context).height / 3,
-                                  margin: const EdgeInsets.fromLTRB(
-                                      10.0, 10.0, 20.0, 10.0),
-                                  decoration:
-                                      roundedBorder(borderColor: Colors.white),
+                                Expanded(
+                                  flex: 2,
                                   child: ButtonList(
                                       connection: connection,
                                       station: _station!,
                                       user: _user,
                                       index: widget.index),
                                 ),
-                              ),
-                            ]),
+                              ]),
+                        ),
                         const StationGraphList(type: true, id: 2),
                         const StationGraphList(type: false, id: 2),
                       ],
@@ -161,5 +156,3 @@ class _StationScreenState extends State<StationScreen> {
             body: const Center(child: CircularProgressIndicator()));
   }
 }
-
-
