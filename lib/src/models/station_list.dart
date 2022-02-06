@@ -12,7 +12,7 @@ import 'location.dart';
 class StationList {
   Mysql db = Mysql();
   late MySqlConnection connection;
-  late List<Station> stationList;
+  late List stationList;
   late User _user;
   List<Map> stationsJson = [];
 
@@ -22,6 +22,7 @@ class StationList {
     connection = await db.getConn();
     _user = await getUser();
     stationList = await getStationList();
+    print(stationList);
     stationsJson = List.generate(
         stationList.length, (index) => stationList[index].toJson());
     await writeData(stationsJson);
@@ -37,29 +38,18 @@ class StationList {
     List<Station> stations = [];
     String cmdName = '';
 
-    switch (_user.typeId) {
-      case 1:
-        cmdName = "Get all stations data";
-        break;
-      case 2:
-        if (_user.stationId == null) {
-          return;
-        }
-        cmdName = "Get station data";
-        break;
-      case 3:
-        if (_user.stationId == null) {
-          return;
-        }
-        cmdName = "Get station data";
-        break;
-      default:
-        cmdName = "Get station data";
+    if (_user.typeId == 1) {
+      cmdName = "Get all stations data";
+    } else {
+      if (_user.stationId == null) {
+        return [];
+      }
+      cmdName = "Get station data";
     }
     String sql = await getCmd(connection, cmdName);
     if (sql.isNotEmpty) {
-      var results = await connection.query(
-          sql, _user.stationId != null ? [_user.stationId] : null);
+      var results =
+          await connection.query(sql, _user.typeId != 1 ? [_user.id] : null);
       for (var row in results) {
         stations.add(Station(
             id: row[0],

@@ -8,9 +8,9 @@ Future<String> getCmd(MySqlConnection connection, String cmdName) async {
   String cmd = '';
   String sql = '''SELECT sqlFunction FROM permission 
         WHERE permissionId IN 
-          (SELECT permissionId FROM type_permission WHERE typeId = ?) 
+          (SELECT permissionId FROM type_permission WHERE typeId = $_typeId) 
         AND name = "$cmdName"''';
-  var results = await connection.query(sql, [_typeId]);
+  var results = await connection.query(sql);
   if (results.isNotEmpty) {
     for (var row in results) {
       cmd = row[0].toString().replaceAll('{}', '?');

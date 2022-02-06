@@ -7,6 +7,7 @@ import '../../../models/station.dart';
 import '../../../models/user.dart';
 import '../../../utils/connectDb.dart';
 import '../../../utils/getSqlFunction.dart';
+import '../../home/home_page.dart';
 import 'employee_list.dart';
 import 'find_repairer.dart';
 
@@ -29,6 +30,16 @@ class ButtonList extends StatefulWidget {
 
 class _ButtonListState extends State<ButtonList> {
   var db = Mysql();
+
+  void _exitStation() async {
+    String sql = await getCmd(widget.connection, 'Exit station');
+    await widget.connection.query(sql, [widget.user.id]);
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      HomePage.routeName,
+      (_) => false,
+    );
+  }
 
   void _toggleState() async {
     String sql = await getCmd(widget.connection, 'Toggle state');
@@ -57,18 +68,12 @@ class _ButtonListState extends State<ButtonList> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (!widget.station.state && widget.user.typeId == 1)
-              InkWell(
-                onTap: () => Navigator.restorablePushNamed(
-                    context, RepairerPage.routeName,
-                    arguments: <String, int>{'id': widget.station.id}),
-                child: Row(children: [
-                  Text(
-                    'Send repairer',
-                    style: boldTextStyle(size: 30.0),
-                  ),
-                  const Icon(Icons.arrow_forward_ios_rounded)
-                ]),
-              ),
+              Button(
+                  title: 'Send repairer',
+                  onPressed: () => Navigator.restorablePushNamed(
+                      context, RepairerPage.routeName,
+                      arguments: <String, int>{'id': widget.station.id}),
+                  icon: const Icon(Icons.arrow_forward_ios_rounded)),
             if (widget.user.typeId != 4)
               Button(
                 title: 'Employee List',
@@ -113,6 +118,12 @@ class _ButtonListState extends State<ButtonList> {
                       icon: const Icon(Icons.toggle_off_outlined),
                       color: Colors.red,
                     ),
+            if (widget.user.typeId == 3 && widget.station.state)
+              Button(
+                  title: 'Exit station',
+                  onPressed: () => _exitStation(),
+                  color: Colors.red,
+                  icon: const Icon(Icons.exit_to_app_rounded))
           ],
         ));
   }

@@ -23,8 +23,8 @@ class _StationViewState extends State<StationView> {
 
   @override
   void initState() {
-    setUpConn();
     super.initState();
+    setUpConn();
   }
 
   @override
