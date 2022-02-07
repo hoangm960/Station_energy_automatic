@@ -73,7 +73,7 @@ class _RepairerPageState extends State<RepairerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Employee List'),
+        title: const Text('Repairers List'),
       ),
       body: (_connState == ConnectionState.finished)
           ? GridView.extent(

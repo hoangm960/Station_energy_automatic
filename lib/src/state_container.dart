@@ -42,13 +42,13 @@ class StateContainerState extends State<StateContainer> {
   late User user;
   late List<Station> stationList;
 
-  void updateUser(User _user) async {
+  void updateUser(User _user) {
     setState(() {
       user = _user;
     });
   }
 
-  void updateStationList(List<Station> _stationList) async {
+  void updateStationList(List<Station> _stationList) {
     setState(() {
       stationList = _stationList;
     });

@@ -60,8 +60,8 @@ class _StationListViewState extends State<StationListView> {
     String sql = await getCmd(context, cmdName);
     if (sql.isNotEmpty) {
       var results = await connection.query(
-          '''SELECT stationId, name, ST_X(location), ST_Y(location), voltDC, currentDC, voltAC, currentAC, powerAC, energyAC, frequencyAC, powerfactorAC, state, returned FROM station''',
-          _user.typeId != 1 ? [_user.id] : null);
+          sql,
+          _user.typeId != 1 ? [_user.stationId] : null);
       for (var row in results) {
         stations.add(Station(
             id: row[0],
@@ -78,7 +78,6 @@ class _StationListViewState extends State<StationListView> {
             state: (row[12] == 1) ? true : false,
             returned: (row[13] == 1) ? true : false));
       }
-      print(stations);
     }
     if (stations.isNotEmpty) {
       container.updateStationList(stations);

@@ -52,7 +52,7 @@ class _StationScreenState extends State<StationScreen> {
     super.dispose();
   }
 
-  Future _setUpCheckWind() async {
+  void _setUpCheckWind() {
     final container = StateContainer.of(context);
 
     Station _station = container.stationList[0];
@@ -61,6 +61,7 @@ class _StationScreenState extends State<StationScreen> {
   }
 
   void _getParam(Timer timer) async {
+    final container = StateContainer.of(context);
     String sql = await getCmd(context, "Get station data");
     var results = await connection.query(sql, [_station!.id]);
     for (var row in results) {
@@ -81,6 +82,9 @@ class _StationScreenState extends State<StationScreen> {
               state: (row[12] == 1) ? true : false,
               returned: (row[13] == 1) ? true : false);
         });
+        List<Station> _stations = container.stationList;
+        _stations[widget.index] = _station!;
+        container.updateStationList(_stations);
       }
     }
   }
@@ -96,7 +100,7 @@ class _StationScreenState extends State<StationScreen> {
     final container = StateContainer.of(context);
 
     _station = container.stationList[widget.index];
-    await _setUpCheckWind();
+    _setUpCheckWind();
     setState(() {
       _connState = ConnectionState.finished;
     });
@@ -107,6 +111,7 @@ class _StationScreenState extends State<StationScreen> {
   Widget build(BuildContext context) {
     final container = StateContainer.of(context);
     _user = container.user;
+    _station = container.stationList[widget.index];
     return (_connState == ConnectionState.finished)
         ? Scaffold(
             appBar: AppBar(
@@ -156,14 +161,12 @@ class _StationScreenState extends State<StationScreen> {
                                       children: [
                                         Expanded(
                                           flex: 2,
-                                          child: StationMap(station: _station!),
+                                          child: StationMap(index: widget.index),
                                         ),
                                         Expanded(
                                           flex: 1,
                                           child: StationInfo(
                                             index: widget.index,
-                                            user: _user,
-                                            station: _station!,
                                           ),
                                         ),
                                       ],

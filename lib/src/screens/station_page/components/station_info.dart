@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/models/user.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 
 class StationInfo extends StatefulWidget {
   final int index;
-  final User user;
-  final Station station;
-  const StationInfo(
-      {Key? key,
-      required this.index,
-      required this.user,
-      required this.station})
-      : super(key: key);
+  const StationInfo({
+    Key? key,
+    required this.index,
+  }) : super(key: key);
 
   @override
   State<StationInfo> createState() => _StationInfoState();
@@ -22,13 +18,8 @@ class _StationInfoState extends State<StationInfo> {
   late Station _station;
 
   @override
-  void initState() {
-    super.initState();
-    _station = widget.station;
-  }
-
-  @override
   Widget build(BuildContext context) {
+    _station = StateContainer.of(context).stationList[widget.index];
     return Container(
       margin: const EdgeInsets.fromLTRB(10.0, 10.0, 8.0, 8.0),
       padding: const EdgeInsets.all(18.0),
