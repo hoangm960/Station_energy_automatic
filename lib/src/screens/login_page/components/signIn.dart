@@ -124,6 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
         if (pw == row[1]) {
           await saveUser(row[0]);
           await getStationList();
+          connection.close();
           _user.stationId == null
               ? Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -144,7 +145,6 @@ class _SignInScreenState extends State<SignInScreen> {
         borderColor = Colors.redAccent;
       });
     }
-    connection.close();
   }
 
   @override

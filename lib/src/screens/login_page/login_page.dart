@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                               });
                             },
                             child: Text(
-                              (signUp)
+                              (!signUp)
                                   ? "Don't have an account? Sign up."
                                   : "Already have an account? Sign in.",
                               style: const TextStyle(color: Colors.grey),
