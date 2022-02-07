@@ -85,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                               (signUp)
                                   ? "Don't have an account? Sign up."
                                   : "Already have an account? Sign in.",
-                              style: TextStyle(color: Colors.grey),
+                              style: const TextStyle(color: Colors.grey),
                             ),
                           ),
                         ],

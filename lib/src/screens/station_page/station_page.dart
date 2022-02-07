@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 import 'package:ocean_station_auto/src/settings/settings_view.dart';
@@ -37,7 +36,6 @@ class _StationScreenState extends State<StationScreen> {
   late Timer stationTimer;
   var db = Mysql();
   late MySqlConnection connection;
-  late User _user;
 
   @override
   void initState() {
@@ -110,7 +108,6 @@ class _StationScreenState extends State<StationScreen> {
   @override
   Widget build(BuildContext context) {
     final container = StateContainer.of(context);
-    _user = container.user;
     _station = container.stationList[widget.index];
     return (_connState == ConnectionState.finished)
         ? Scaffold(
