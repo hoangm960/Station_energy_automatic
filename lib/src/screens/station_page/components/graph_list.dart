@@ -3,88 +3,131 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/constant.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import '../../../models/station.dart';
+
 enum ConnectionState { notDownloaded, loading, finished }
 
-class StationGraphList extends StatelessWidget {
-  const StationGraphList({
-    Key? key,
-    required this.type,
-    required this.id,
-  }) : super(key: key);
+class StationGraphList extends StatefulWidget {
   final bool type;
-  final int id;
+  final int index;
+
+  const StationGraphList({Key? key, required this.type, required this.index})
+      : super(key: key);
+
+  @override
+  State<StationGraphList> createState() => _StationGraphListState();
+}
+
+class _StationGraphListState extends State<StationGraphList> {
+  late Station station;
+  late List info;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(20.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            type ? 'Output DC' : 'Output AC',
-            style: boldTextStyle(),
-          ),
-          Row(
-            children: [
-              Expanded(
-                  child: Column(
+    station = StateContainer.of(context).stationList[widget.index];
+    info = (widget.type)
+        ? [
+            'Output DC',
+            'Volt: ${station.voltDC.toStringAsFixed(2)} V',
+            'Current: ${station.currentDC.toStringAsFixed(2)} A'
+          ]
+        : [
+            'OutputAC',
+            'Volt: ${station.voltAC.toStringAsFixed(2)} V',
+            'Current: ${station.currentAC.toStringAsFixed(2)} A',
+            'Power: ${station.power.toStringAsFixed(2)} W',
+            'Energy: ${station.power.toStringAsFixed(2)} kWh',
+            'Frequency: ${station.power.toStringAsFixed(2)} Hz',
+            'Power Factor: ${station.power.toStringAsFixed(2)}',
+          ];
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(
+          flex: 4,
+          child: Column(children: [
+            Expanded(
+              flex: 2,
+              child: StationGraph(
+                type: widget.type ? 'voltDC * currentDC' : 'energyAC',
+                unit: 'kWh',
+                station: station,
+                title: 'Power',
+              ),
+            ),
+            Expanded(
+              flex: 2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Text(
-                    'Voltage:',
-                    style: boldTextStyle(),
-                  ),
-                  StationGraph(
-                    type: type ? 'voltDC' : 'voltAC',
-                    id: id,
+                  Expanded(
+                      child: StationGraph(
+                    type: widget.type ? 'voltDC' : 'voltAC',
                     unit: 'V',
+                    station: station,
+                    title: 'Voltage',
+                  )),
+                  Expanded(
+                    child: StationGraph(
+                      type: widget.type ? 'currentDC' : 'currentAC',
+                      unit: 'A',
+                      station: station,
+                      title: 'Current',
+                    ),
                   ),
                 ],
-              )),
-              Expanded(
-                child: Column(
-                  children: [
-                    Text(
-                      'Current:',
-                      style: boldTextStyle(),
-                    ),
-                    StationGraph(
-                        type: type ? 'currentDC' : 'currentAC',
-                        id: id,
-                        unit: 'A'),
-                  ],
-                ),
               ),
-            ],
+            ),
+          ]),
+        ),
+        const VerticalDivider(
+          thickness: 2.0,
+          color: Colors.white,
+        ),
+        Expanded(
+          flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: List.generate(info.length, (index) {
+              return (index != 0)
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 25.0, right: 3.0),
+                      child: Text(
+                        info[index],
+                        style: infoTextStyle(),
+                      ),
+                    )
+                  : Container(
+                      decoration: roundedBorder(),
+                      padding: const EdgeInsets.all(10.0),
+                      margin: const EdgeInsets.fromLTRB(2.0, 10.0, 3.0, 35.0),
+                      child: Text(
+                        info[index],
+                        style: boldTextStyle(size: 23.0),
+                      ));
+            }),
           ),
-          Column(
-            children: [
-              Text(
-                'Energy:',
-                style: boldTextStyle(),
-              ),
-              StationGraph(
-                type: type ? 'voltDC * currentDC' : 'energyAC',
-                id: id,
-                unit: 'kWh',
-              ),
-            ],
-          ),
-        ],
-      ),
+        )
+      ],
     );
   }
 }
 
 class StationGraph extends StatefulWidget {
   final String type;
-  final int id;
   final String unit;
+  final Station station;
+  final String title;
   const StationGraph(
-      {Key? key, required this.type, required this.id, required this.unit})
+      {Key? key,
+      required this.type,
+      required this.unit,
+      required this.station,
+      required this.title})
       : super(key: key);
 
   @override
@@ -103,7 +146,7 @@ class _StationGraphState extends State<StationGraph> {
 
   void _getParam() async {
     String sql =
-        'SELECT ${widget.type} FROM station WHERE stationId = ${widget.id}';
+        'SELECT ${widget.type} FROM station WHERE stationId = ${widget.station.id}';
     connection.query(sql).then((results) {
       for (var row in results) {
         setState(() {
@@ -117,7 +160,6 @@ class _StationGraphState extends State<StationGraph> {
   void initState() {
     super.initState();
     timer = Timer.periodic(const Duration(seconds: 1), _updateDataSource);
-
     setUpConn();
   }
 
@@ -162,10 +204,9 @@ class _StationGraphState extends State<StationGraph> {
   Widget build(BuildContext context) {
     return (_connState == ConnectionState.finished)
         ? Container(
-            margin: const EdgeInsets.all(20.0),
-            height: 626.0,
-            color: Colors.black45,
+            margin: const EdgeInsets.all(10.0),
             child: SfCartesianChart(
+                title: ChartTitle(text: widget.title, textStyle: boldTextStyle(color: Colors.black, size: 20.0)),
                 backgroundColor: secondaryColor,
                 borderColor: primaryColor,
                 borderWidth: 2.0,

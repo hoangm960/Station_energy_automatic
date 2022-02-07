@@ -82,7 +82,7 @@ class _StationViewState extends State<StationView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text('Power: '),
-                  Text(widget.station.power.toString() + '(W)')
+                  Text(widget.station.power.toStringAsFixed(2) + '(W)')
                 ],
               ),
               Row(

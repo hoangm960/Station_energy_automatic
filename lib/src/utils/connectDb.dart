@@ -1,5 +1,3 @@
-// ignore_for_file: file_names, constant_identifier_names
-
 import 'package:mysql1/mysql1.dart';
 
 

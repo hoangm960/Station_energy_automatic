@@ -140,51 +140,73 @@ class _StationScreenState extends State<StationScreen> {
               ],
             ),
             body: SafeArea(
-                child: SingleChildScrollView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    child: Column(
-                      children: [
-                        SizedBox(
-                          height: getScreenSize(context).height / 3,
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: Container(
-                                    margin: const EdgeInsets.fromLTRB(
-                                        10.0, 10.0, 20.0, 10.0),
-                                    decoration: roundedBorder(
-                                        borderColor: Colors.white),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          flex: 2,
-                                          child: StationMap(index: widget.index),
-                                        ),
-                                        Expanded(
-                                          flex: 1,
-                                          child: StationInfo(
-                                            index: widget.index,
-                                          ),
-                                        ),
-                                      ],
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            flex: 5,
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(
+                                  10.0, 10.0, 20.0, 10.0),
+                              decoration:
+                                  roundedBorder(borderColor: Colors.white),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: StationMap(index: widget.index),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: StationInfo(
+                                      index: widget.index,
                                     ),
                                   ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: ButtonList(
-                                      connection: connection,
-                                      index: widget.index),
-                                ),
-                              ]),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: ButtonList(
+                                connection: connection, index: widget.index),
+                          ),
+                        ]),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Row(children: [
+                      Expanded(
+                        child: Container(
+                            margin:
+                                const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                            decoration: roundedBorder(borderColor: Colors.white),
+                            child: StationGraphList(
+                              type: true,
+                              index: widget.index,
+                            )),
+                      ),
+                      Expanded(
+                        child: Container(
+                          margin:
+                              const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
+                          decoration: roundedBorder(borderColor: Colors.white),
+                          child: StationGraphList(
+                            type: false,
+                            index: widget.index,
+                          ),
                         ),
-                        const StationGraphList(type: true, id: 2),
-                        const StationGraphList(type: false, id: 2),
-                      ],
-                    ))))
+                      )
+                    ]),
+                  )
+                ],
+              ),
+            ))
         : Scaffold(
             appBar: AppBar(
               title: const Text('Loading...'),
