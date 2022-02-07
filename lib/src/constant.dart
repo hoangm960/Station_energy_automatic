@@ -1,11 +1,7 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'models/user.dart';
 
 const Color primaryColor = Colors.blue;
 const Color secondaryColor = Colors.white;
@@ -17,10 +13,14 @@ Size getScreenSize(context) {
   return MediaQuery.of(context).size;
 }
 
-BoxDecoration roundedBorder({Color? color, Color? borderColor,}) => BoxDecoration(
-    color: color,
-    border: Border.all(color: borderColor ?? Colors.white),
-    borderRadius: const BorderRadius.all(Radius.circular(10.0)));
+BoxDecoration roundedBorder({
+  Color? color,
+  Color? borderColor,
+}) =>
+    BoxDecoration(
+        color: color,
+        border: Border.all(color: borderColor ?? Colors.white),
+        borderRadius: const BorderRadius.all(Radius.circular(10.0)));
 
 class Paths {
   Future<String> get localPath async {

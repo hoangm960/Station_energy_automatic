@@ -1,9 +1,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
-import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
+import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 import 'dart:async';
 
 import 'package:webview_windows/webview_windows.dart';
@@ -56,26 +56,15 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
   
 
   Future _getCameraUrl() async {
-    String sql = await _getCameraUrlCmd();
+    String sql = await getCmd(context, 'Check camera');
     if (sql.isNotEmpty) {
-      var results = await connection.query(sql);
+      var results = await connection.query(sql, [_station.id]);
       for (var row in results) {
         setState(() {
           _url = row[0];
         });
       }
     }
-  }
-
-  Future<String> _getCameraUrlCmd() async {
-    String cmd = '';
-    String sql =
-        'SELECT sqlFunction FROM permission WHERE name = "Check camera"';
-    var results = await connection.query(sql);
-    for (var row in results) {
-      cmd = row[0].toString().replaceFirst('{}', '${_station.id}');
-    }
-    return cmd;
   }
 
   Future<void> initPlatformState() async {

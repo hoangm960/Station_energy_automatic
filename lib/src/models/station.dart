@@ -1,9 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
-
 import 'location.dart';
-part 'station.g.dart';
 
-@JsonSerializable(explicitToJson: true)
 class Station {
   final int id;
   final String name;
@@ -34,9 +30,4 @@ class Station {
     this.frequency = 0.0,
     this.powerFactor = 0.0,
   });
-
-  factory Station.fromJson(Map<String, dynamic> json) =>
-      _$StationFromJson(json);
-
-  Map<String, dynamic> toJson() => _$StationToJson(this);
 }

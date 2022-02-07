@@ -139,7 +139,7 @@ class _StationScreenState extends State<StationScreen> {
                     physics: const NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
-                        Container(
+                        SizedBox(
                           height: getScreenSize(context).height / 3,
                           child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
