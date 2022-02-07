@@ -177,8 +177,6 @@ class _StationScreenState extends State<StationScreen> {
                                   flex: 2,
                                   child: ButtonList(
                                       connection: connection,
-                                      station: _station!,
-                                      user: _user,
                                       index: widget.index),
                                 ),
                               ]),

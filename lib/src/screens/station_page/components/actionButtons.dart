@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/camera.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 
 import '../../../constant.dart';
 import '../../../models/station.dart';
@@ -12,16 +13,9 @@ import 'employee_list.dart';
 import 'find_repairer.dart';
 
 class ButtonList extends StatefulWidget {
-  final Station station;
-  final User user;
   final int index;
   final MySqlConnection connection;
-  const ButtonList(
-      {Key? key,
-      required this.station,
-      required this.user,
-      required this.index,
-      required this.connection})
+  const ButtonList({Key? key, required this.index, required this.connection})
       : super(key: key);
 
   @override
@@ -30,10 +24,12 @@ class ButtonList extends StatefulWidget {
 
 class _ButtonListState extends State<ButtonList> {
   var db = Mysql();
+  late Station _station;
+  late User _user;
 
   void _exitStation() async {
     String sql = await getCmd(context, 'Exit station');
-    await widget.connection.query(sql, [widget.user.id]);
+    await widget.connection.query(sql, [_user.id]);
     Navigator.pushNamedAndRemoveUntil(
       context,
       HomePage.routeName,
@@ -43,22 +39,25 @@ class _ButtonListState extends State<ButtonList> {
 
   void _toggleState() async {
     String sql = await getCmd(context, 'Toggle state');
-    await widget.connection.query(sql, [widget.station.id]);
+    await widget.connection.query(sql, [_station.id]);
     setState(() {
-      widget.station.state = !widget.station.state;
+      _station.state = !_station.state;
     });
   }
 
   void _toggleReturn() async {
     String sql = await getCmd(context, 'Toggle return station');
-    await widget.connection.query(sql, [widget.station.id]);
+    await widget.connection.query(sql, [_station.id]);
     setState(() {
-      widget.station.returned = !widget.station.returned;
+      _station.returned = !_station.returned;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    _station = container.stationList[widget.index];
+    _user = container.user;
     return Container(
         margin: const EdgeInsets.fromLTRB(10.0, 10.0, 20.0, 10.0),
         padding: const EdgeInsets.all(18.0),
@@ -67,22 +66,22 @@ class _ButtonListState extends State<ButtonList> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (!widget.station.state && widget.user.typeId == 1)
+            if (!_station.state && _user.typeId == 1)
               Button(
                   title: 'Send repairer',
                   onPressed: () => Navigator.restorablePushNamed(
                       context, RepairerPage.routeName,
-                      arguments: <String, int>{'id': widget.station.id}),
+                      arguments: <String, int>{'id': _station.id}),
                   icon: const Icon(Icons.arrow_forward_ios_rounded)),
-            if (widget.user.typeId != 4)
+            if (_user.typeId != 4)
               Button(
                 title: 'Employee List',
                 onPressed: () => Navigator.restorablePushNamed(
                     context, EmployeeListPage.routeName,
-                    arguments: <String, int>{'id': widget.station.id}),
+                    arguments: <String, int>{'id': _station.id}),
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
               ),
-            if (widget.user.typeId != 4)
+            if (_user.typeId != 4)
               Button(
                 title: 'Security Camera',
                 onPressed: () {
@@ -92,8 +91,8 @@ class _ButtonListState extends State<ButtonList> {
                 },
                 icon: const Icon(Icons.arrow_forward_ios_rounded),
               ),
-            if ([2, 3].contains(widget.user.typeId))
-              !widget.station.state
+            if ([2, 3].contains(_user.typeId))
+              !_station.state
                   ? Button(
                       title: 'Report fixed state',
                       onPressed: () => _toggleState(),
@@ -104,8 +103,8 @@ class _ButtonListState extends State<ButtonList> {
                       onPressed: () => _toggleState(),
                       color: Colors.red,
                       icon: const Icon(Icons.error_outline)),
-            if (widget.user.typeId != 4)
-              widget.station.returned
+            if (_user.typeId != 4)
+              _station.returned
                   ? Button(
                       title: 'Energy arm returned',
                       onPressed: () => _toggleReturn(),
@@ -118,7 +117,7 @@ class _ButtonListState extends State<ButtonList> {
                       icon: const Icon(Icons.toggle_off_outlined),
                       color: Colors.red,
                     ),
-            if (widget.user.typeId == 3 && widget.station.state)
+            if (_user.typeId == 3 && _station.state)
               Button(
                   title: 'Exit station',
                   onPressed: () => _exitStation(),
