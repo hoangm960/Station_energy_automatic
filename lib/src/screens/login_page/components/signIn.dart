@@ -12,6 +12,10 @@ import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 
+import '../../../models/location.dart';
+import '../../../models/station.dart';
+import '../../../utils/getSqlFunction.dart';
+
 enum ConnectionState { notDownloaded, loading, finished }
 
 class SignInScreen extends StatefulWidget {
@@ -53,13 +57,6 @@ class _SignInScreenState extends State<SignInScreen> {
     });
   }
 
-  Future<File> writeData(var data) async {
-    Paths paths = Paths();
-    final file = await paths.userFile;
-
-    return file.writeAsString(json.encode(data));
-  }
-
   Future saveUser(id) async {
     String sql = '''SELECT u.name, displayName, t.name, t.typeId, u.stationId
             FROM user u
@@ -79,7 +76,46 @@ class _SignInScreenState extends State<SignInScreen> {
         container.updateUser(_user);
       }
     }
-    connection.close();
+  }
+
+  Future getStationList() async {
+    final container = StateContainer.of(context);
+    _user = container.user;
+    List<Station> stations = [];
+    String cmdName = '';
+
+    if (_user.typeId == 1) {
+      cmdName = "Get all stations data";
+    } else {
+      if (_user.stationId == null) {
+        return [];
+      }
+      cmdName = "Get station data";
+    }
+    String sql = await getCmd(context, cmdName);
+    if (sql.isNotEmpty) {
+      var results = await connection.query(
+          sql, _user.typeId != 1 ? [_user.stationId] : null);
+      for (var row in results) {
+        stations.add(Station(
+            id: row[0],
+            name: row[1],
+            location: Location(x: row[2] ?? 0.0, y: row[3] ?? 0.0),
+            voltDC: row[4] ?? 0.0,
+            currentDC: row[5] ?? 0.0,
+            voltAC: row[6] ?? 0.0,
+            currentAC: row[7] ?? 0.0,
+            power: row[8] ?? 0.0,
+            energy: row[9] ?? 0.0,
+            frequency: row[10] ?? 0.0,
+            powerFactor: row[11] ?? 0.0,
+            state: (row[12] == 1) ? true : false,
+            returned: (row[13] == 1) ? true : false));
+      }
+    }
+    if (stations.isNotEmpty) {
+      container.updateStationList(stations);
+    }
   }
 
   void checkData() async {
@@ -91,6 +127,7 @@ class _SignInScreenState extends State<SignInScreen> {
       for (var row in results) {
         if (pw == row[1]) {
           await saveUser(row[0]);
+          await getStationList();
           _user.stationId == null
               ? Navigator.pushNamedAndRemoveUntil(
                   context,
@@ -111,6 +148,7 @@ class _SignInScreenState extends State<SignInScreen> {
         borderColor = Colors.redAccent;
       });
     }
+    connection.close();
   }
 
   @override
