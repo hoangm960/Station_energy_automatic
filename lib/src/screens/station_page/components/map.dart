@@ -5,23 +5,34 @@ import 'package:map/map.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/state_container.dart';
 
 class StationMap extends StatefulWidget {
   final int index;
-  const StationMap({Key? key, required this.index}) : super(key: key);
+  final Station station;
+  const StationMap({Key? key, required this.index, required this.station})
+      : super(key: key);
 
   @override
   State<StationMap> createState() => _StationMapState();
 }
 
 class _StationMapState extends State<StationMap> {
-  late Station _station;
   late LatLng _currentLocation;
   late MapController controller;
 
+  @override
+  void initState() {
+    super.initState();
+    _currentLocation =
+        LatLng(widget.station.location.x, widget.station.location.y);
+    controller = MapController(
+      location: _currentLocation,
+    );
+  }
+
   void _gotoDefault() {
-    controller.center = LatLng(_station.location.x, _station.location.y);
+    controller.center =
+        LatLng(widget.station.location.x, widget.station.location.y);
     setState(() {});
   }
 
@@ -68,11 +79,6 @@ class _StationMapState extends State<StationMap> {
 
   @override
   Widget build(BuildContext context) {
-    _station = StateContainer.of(context).stationList[widget.index];
-    _currentLocation = LatLng(_station.location.x, _station.location.y);
-    controller = MapController(
-      location: _currentLocation,
-    );
     controller.zoom = 8;
     return Container(
         margin: const EdgeInsets.all(18.0),

@@ -156,7 +156,7 @@ class _StationScreenState extends State<StationScreen> {
                                 children: [
                                   Expanded(
                                     flex: 2,
-                                    child: StationMap(index: widget.index),
+                                    child: StationMap(index: widget.index, station: _station!,),
                                   ),
                                   Expanded(
                                     flex: 1,
