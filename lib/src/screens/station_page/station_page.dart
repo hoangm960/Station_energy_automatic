@@ -8,9 +8,12 @@ import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/profile_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/components/map.dart';
 import 'package:ocean_station_auto/src/settings/settings_view.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/wind.dart';
 
+import '../../models/location.dart';
+import '../../utils/getSqlFunction.dart';
 import 'components/actionButtons.dart';
 import 'components/graph_list.dart';
 import 'components/station_info.dart';
@@ -30,7 +33,8 @@ class StationScreen extends StatefulWidget {
 class _StationScreenState extends State<StationScreen> {
   Station? _station;
   ConnectionState _connState = ConnectionState.notDownloaded;
-  late Timer timer;
+  late Timer windTimer;
+  late Timer stationTimer;
   var db = Mysql();
   late MySqlConnection connection;
   late User _user;
@@ -43,34 +47,66 @@ class _StationScreenState extends State<StationScreen> {
 
   @override
   void dispose() {
-    timer.cancel();
+    windTimer.cancel();
+    stationTimer.cancel();
     super.dispose();
   }
 
   Future _setUpCheckWind() async {
-    Station _station = await getStation(0);
-    timer = Timer.periodic(const Duration(seconds: 20),
+    final container = StateContainer.of(context);
+
+    Station _station = container.stationList[0];
+    windTimer = Timer.periodic(const Duration(seconds: 20),
         (Timer timer) => checkWindSpeed(connection, context, _station));
+  }
+
+  void _getParam(Timer timer) async {
+    String sql = await getCmd(context, "Get station data");
+    var results = await connection.query(sql, [_station!.id]);
+    for (var row in results) {
+      if (mounted) {
+        setState(() {
+          _station = Station(
+              id: row[0],
+              name: row[1],
+              location: Location(x: row[2], y: row[3]),
+              voltDC: row[4],
+              currentDC: row[5],
+              voltAC: row[6],
+              currentAC: row[7],
+              power: row[8],
+              energy: row[9],
+              frequency: row[10],
+              powerFactor: row[11],
+              state: (row[12] == 1) ? true : false,
+              returned: (row[13] == 1) ? true : false);
+        });
+      }
+    }
   }
 
   Future setUpConn() async {
     setState(() {
       _connState = ConnectionState.loading;
     });
-    _user = await getUser();
     MySqlConnection _connection = await db.getConn();
     setState(() {
       connection = _connection;
     });
-    _station = await getStation(widget.index);
+    final container = StateContainer.of(context);
+
+    _station = container.stationList[widget.index];
     await _setUpCheckWind();
     setState(() {
       _connState = ConnectionState.finished;
     });
+    stationTimer = Timer.periodic(const Duration(seconds: 5), _getParam);
   }
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    _user = container.user;
     return (_connState == ConnectionState.finished)
         ? Scaffold(
             appBar: AppBar(
@@ -125,7 +161,6 @@ class _StationScreenState extends State<StationScreen> {
                                         Expanded(
                                           flex: 1,
                                           child: StationInfo(
-                                            connection: connection,
                                             index: widget.index,
                                             user: _user,
                                             station: _station!,

@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/models/station.dart';
-import 'package:ocean_station_auto/src/models/station_list.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'models/user.dart';
@@ -39,23 +38,4 @@ class Paths {
     final path = await localPath;
     return File('$path/stations.json');
   }
-}
-
-Future getUser() async {
-  Paths paths = Paths();
-  final file = await paths.userFile;
-
-  final contents = await file.readAsString();
-  final Map<String, dynamic> jsonUser = json.decode(contents);
-  return User.fromJson(jsonUser);
-}
-
-Future<Station> getStation(stationIndex) async {
-  await StationList().init();
-  Paths paths = Paths();
-  File file = await paths.stationsFile;
-  String contents = await file.readAsString();
-  List jsonStations = await json.decode(contents);
-  return List.generate(jsonStations.length,
-      (index) => Station.fromJson(jsonStations[index]))[stationIndex];
 }

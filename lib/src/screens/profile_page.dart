@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ocean_station_auto/src/constant.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/login_page/login_page.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -15,29 +16,12 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? _user;
-
-  @override
-  void initState() {
-    super.initState();
-    getUser().then((value) {
-      setState(() {
-        _user = value;
-      });
-    });
-  }
-
-  Future<User> getUser() async {
-    Paths paths = Paths();
-    final file = await paths.userFile;
-
-    final contents = await file.readAsString();
-    final Map<String, dynamic> jsonUser = json.decode(contents);
-    return User.fromJson(jsonUser);
-  }
+  late User _user;
 
   @override
   Widget build(BuildContext context) {
+    final container = StateContainer.of(context);
+    _user = container.user;
     return Scaffold(
       appBar: AppBar(title: const Text('Profile')),
       body: Center(
@@ -57,19 +41,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(
                 height: 20.0,
               ),
-              Text("ID:    ${_user?.id ?? ''}"),
+              Text("ID:    ${_user.id}"),
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Username:    ${_user?.username ?? ''}"),
+              Text("Username:    ${_user.username}"),
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Display name:    ${_user?.displayName ?? ''}"),
+              Text("Display name:    ${_user.displayName}"),
               const SizedBox(
                 height: 20.0,
               ),
-              Text("Type:    ${_user?.type ?? ''}"),
+              Text("Type:    ${_user.type}"),
               const SizedBox(
                 height: 20.0,
               ),

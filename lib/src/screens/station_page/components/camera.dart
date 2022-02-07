@@ -8,6 +8,8 @@ import 'dart:async';
 
 import 'package:webview_windows/webview_windows.dart';
 
+import '../../../state_container.dart';
+
 enum ConnectionState { notDownloaded, loading, finished }
 
 class LiveStreamingPlayer extends StatefulWidget {
@@ -44,7 +46,9 @@ class _LiveStreamingPlayerState extends State<LiveStreamingPlayer> {
       connection = _connection;
       _connState = ConnectionState.finished;
     });
-    _station = await getStation(widget.index);
+    final container = StateContainer.of(context);
+
+    _station = container.stationList[widget.index];
     await _getCameraUrl();
     initPlatformState();
   }

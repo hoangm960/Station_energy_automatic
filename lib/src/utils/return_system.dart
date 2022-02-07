@@ -1,8 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/utils/getSqlFunction.dart';
 
-void returnSystem(MySqlConnection connection, int id) async {
-  String sql = await getCmd(connection, "Toggle return station");
+void returnSystem(BuildContext context, MySqlConnection connection, int id) async {
+  String sql = await getCmd(context, "Toggle return station");
   await connection.query(sql, [id]);
 }
 

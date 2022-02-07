@@ -32,7 +32,7 @@ class _ButtonListState extends State<ButtonList> {
   var db = Mysql();
 
   void _exitStation() async {
-    String sql = await getCmd(widget.connection, 'Exit station');
+    String sql = await getCmd(context, 'Exit station');
     await widget.connection.query(sql, [widget.user.id]);
     Navigator.pushNamedAndRemoveUntil(
       context,
@@ -42,7 +42,7 @@ class _ButtonListState extends State<ButtonList> {
   }
 
   void _toggleState() async {
-    String sql = await getCmd(widget.connection, 'Toggle state');
+    String sql = await getCmd(context, 'Toggle state');
     await widget.connection.query(sql, [widget.station.id]);
     setState(() {
       widget.station.state = !widget.station.state;
@@ -50,7 +50,7 @@ class _ButtonListState extends State<ButtonList> {
   }
 
   void _toggleReturn() async {
-    String sql = await getCmd(widget.connection, 'Toggle return station');
+    String sql = await getCmd(context, 'Toggle return station');
     await widget.connection.query(sql, [widget.station.id]);
     setState(() {
       widget.station.returned = !widget.station.returned;

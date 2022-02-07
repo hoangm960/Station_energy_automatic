@@ -43,7 +43,7 @@ class _RepairerPageState extends State<RepairerPage> {
   }
 
   void _getRepairer() async {
-    String sql = await Future.value(getCmd(connection, 'Get all repairers'));
+    String sql = await Future.value(getCmd(context, 'Get all repairers'));
     List<User> _repairerList = [];
     if (sql.isNotEmpty) {
       var results = await connection.query(sql);
@@ -65,7 +65,7 @@ class _RepairerPageState extends State<RepairerPage> {
   }
 
   void _assignRepairer(userId) async {
-    String sql = await getCmd(connection, 'Assign repair');
+    String sql = await getCmd(context, 'Assign repair');
     await connection.query(sql, [widget.stationId, userId]);
   }
 

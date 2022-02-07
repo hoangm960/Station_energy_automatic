@@ -13,7 +13,7 @@ import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
 import 'settings/settings_controller.dart';
 import 'settings/settings_view.dart';
 
-/// The Widget that configures your application.
+
 class MyApp extends StatelessWidget {
   const MyApp({
     Key? key,
@@ -60,13 +60,19 @@ class MyApp extends StatelessWidget {
                     return StationScreen(stationArgs['station']);
                   case LiveStreamingPlayer.routeName:
                     Map playerArgs = routeSettings.arguments as Map;
-                    return LiveStreamingPlayer(index: playerArgs['index'],);
+                    return LiveStreamingPlayer(
+                      index: playerArgs['index'],
+                    );
                   case RepairerPage.routeName:
                     Map stationArgs = routeSettings.arguments as Map;
-                    return RepairerPage(stationId: stationArgs['id'],);
+                    return RepairerPage(
+                      stationId: stationArgs['id'],
+                    );
                   case EmployeeListPage.routeName:
                     Map stationArgs = routeSettings.arguments as Map;
-                    return EmployeeListPage(stationId: stationArgs['id'],);
+                    return EmployeeListPage(
+                      stationId: stationArgs['id'],
+                    );
                   case LoginPage.routeName:
                     return const LoginPage();
                   case HomePage.routeName:

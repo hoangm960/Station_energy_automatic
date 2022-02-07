@@ -45,7 +45,7 @@ void _windAlert(MySqlConnection connection, BuildContext context, Station statio
             actions: [
               TextButton.icon(
                   onPressed: () {
-                    returnSystem(connection, station.id);
+                    returnSystem(context, connection, station.id);
                     Navigator.pop(context);
                   },
                   icon: const Icon(Icons.check),

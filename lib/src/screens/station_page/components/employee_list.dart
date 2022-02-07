@@ -44,7 +44,7 @@ class _EmployeeListPageState extends State<EmployeeListPage> {
   }
 
   void _getEmployees() async {
-    String sql = await Future.value(getCmd(connection, 'Get all employees'));
+    String sql = await Future.value(getCmd(context, 'Get all employees'));
     List<User> _employeeList = [];
     if (sql.isNotEmpty) {
       var results = await connection.query(sql, [widget.stationId]);

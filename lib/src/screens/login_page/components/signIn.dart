@@ -6,6 +6,7 @@ import 'package:mysql1/mysql1.dart';
 import 'package:ocean_station_auto/src/models/user.dart';
 import 'package:ocean_station_auto/src/screens/home/home_page.dart';
 import 'package:ocean_station_auto/src/screens/station_page/station_page.dart';
+import 'package:ocean_station_auto/src/state_container.dart';
 import 'package:ocean_station_auto/src/utils/connectDb.dart';
 import 'package:ocean_station_auto/src/utils/hashPw.dart';
 import 'package:ocean_station_auto/src/screens/login_page/components/textBox.dart';
@@ -74,8 +75,8 @@ class _SignInScreenState extends State<SignInScreen> {
             type: row[2],
             typeId: row[3],
             stationId: row[4]);
-        Map userData = _user.toJson();
-        writeData(userData);
+        final container = StateContainer.of(context);
+        container.updateUser(_user);
       }
     }
     connection.close();
