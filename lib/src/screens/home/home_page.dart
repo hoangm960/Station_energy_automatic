@@ -50,12 +50,6 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(
             width: 16.0,
           ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.restorablePushNamed(context, SettingsView.routeName);
-            },
-          ),
         ],
       ),
       body: stationList,
